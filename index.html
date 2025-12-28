@@ -330,6 +330,24 @@ bigHeart.onclick = () => {
         setTimeout(()=>e.remove(), duration + 100);
     }
 
+    // Show final text and image after a short delay
+    setTimeout(()=>{
+        newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
+
+        // Add image below the text
+        const img = document.createElement("img");
+        img.src = "https://imgur.com/a/ENPP4OI"; // <-- replace with your image URL
+        img.style.width = "250px";
+        img.style.marginTop = "20px";
+        img.style.borderRadius = "16px";
+        img.style.boxShadow = "0 10px 30px rgba(255,182,193,0.5)";
+        newYearText.appendChild(img);
+
+        newYearText.classList.add("show");
+    },200);
+};
+
+
     // Show final text after a short delay
     setTimeout(()=>{
         newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";

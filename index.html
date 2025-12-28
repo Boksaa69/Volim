@@ -18,12 +18,12 @@ body {
 /* Fireworks */
 canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
-/* Floating watermark */
+/* Floating watermarks */
 .watermark {
     position: fixed;
     font-size: 14px;
     opacity: 0.6;
-    z-index: 3;
+    z-index: 2;
     animation: floatWM 18s linear infinite;
 }
 @keyframes floatWM {
@@ -44,7 +44,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     margin: 60px auto;
     box-shadow: 0 20px 50px rgba(0,0,0,0.45);
     position: relative;
-    z-index: 2;
+    z-index: 3; /* make sure card and button are above hearts and watermarks */
 }
 
 /* Poem + messages */
@@ -92,7 +92,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     pointer-events: none;
     transform: translate(-50%, -50%);
     opacity: 0;
-    z-index: 3;
+    z-index: 4;
 }
 
 /* Big heart */
@@ -114,6 +114,9 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Replay button */
 #replayBtn { display: none; margin-top: 15px; }
 
+/* Start button */
+#startBtn { z-index: 5; position: relative; }
+
 /* Volume slider */
 #volumeSlider {
     position: fixed;
@@ -129,7 +132,13 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
 <canvas id="fireworks"></canvas>
 <div id="fingerKiss">Poljubac 💋</div>
+
+<!-- Multiple floating watermarks -->
 <div class="watermark">Zana ❤️ Boris</div>
+<div class="watermark" style="animation-delay: 3s; font-size:16px;">Zana ❤️ Boris</div>
+<div class="watermark" style="animation-delay: 6s; font-size:12px;">Zana ❤️ Boris</div>
+<div class="watermark" style="animation-delay: 9s; font-size:14px;">Zana ❤️ Boris</div>
+<div class="watermark" style="animation-delay: 12s; font-size:18px;">Zana ❤️ Boris</div>
 
 <div class="card">
     <div id="poem"></div>
@@ -191,7 +200,6 @@ document.addEventListener("touchmove", e=>{
 });
 
 // YouTube player API
-let YTvolume = 100;
 const ytplayer = document.getElementById("ytplayer");
 
 // Poems + GIFs
@@ -212,7 +220,7 @@ const gifs = [
 "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajQzbXA0eGoxdTNqdHhncGVlOWljeWd1cjVqdWtlejVsYXplcG9qciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0cdbJBHZXG2hm132X2/giphy.gif",
 "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHNva29kMWlvdzhiZjlkZGJ3eGh2d2dlMGpkdTNiYmhjMWR6dGlvNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/f8tsej5s20oraBHkks/giphy.gif",
 "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTc1MXdwdWJsc3lzMGwxODhrNGMyamN1a2lzbW9tMDZmc3FsMjZpYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VJrQgIxar9GwMDztbg/giphy.gif",
-"https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHpjd2gxeDBvM295djlnYjN4amc4Y3h6dWl2NHh6cm8yYm1uN2lueiZlcD12MV9pbnRlcm5hbF9naWQmY3Q9Zw/tdqsLa4NQQ5yTs9rMp/giphy.gif"
+"https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHpjd2gxeDBvM295djlnYjN4amc4Y3h6dWl2NHh6cm8yYm1uN2lueiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tdqsLa4NQQ5yTs9rMp/giphy.gif"
 ];
 
 const poemDiv = document.getElementById("poem");
@@ -226,7 +234,7 @@ const volumeSlider = document.getElementById("volumeSlider");
 
 let index=0;
 
-// Start
+// Start sequence
 startBtn.onclick = ()=>{
     startBtn.style.display="none";
     ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); 

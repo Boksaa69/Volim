@@ -5,12 +5,12 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', 'Noto Color Emoji', sans-serif;
     background: radial-gradient(circle at bottom, #1b0036, #000);
     color: white;
     text-align: center;
@@ -82,8 +82,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
-    white-space: pre-wrap;
-    word-wrap: break-word;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
@@ -112,7 +110,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 #fingerKiss { position: fixed; font-size: 20px; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; z-index: 4; }
 
 /* Big heart */
-#bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; z-index:4; }
+#bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; z-index:5; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 #heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
 
@@ -147,14 +145,8 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Skip countdown tiny button */
 #skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 
-/* Letter animation */
-.letter { display: inline-block; opacity: 0; transform: translateY(15px); animation: letterFade 0.6s forwards; }
-.letter.space { display: inline-block; width: 0.5em; }
-@keyframes letterFade { to { opacity: 1; transform: translateY(0); } }
-
-/* Floating heart letters */
-.floating-heart { position: absolute; font-size: 16px; pointer-events: none; animation: heartRise 1s forwards; color: #ff69b4; }
-@keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
+/* Letter fade animation */
+@keyframes letterFade { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
 </style>
 </head>
 <body>
@@ -179,7 +171,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="bigHeart">❤️</div>
     <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
-    <video id="endVideo" loop muted playsinline>
+    <video id="endVideo" loop autoplay muted playsinline>
         <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
     </video>
     <button id="startBtn" disabled>Start 💌</button>
@@ -297,38 +289,35 @@ const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.textContent="";
-    document.getElementById("countdownGif").style.display="none";
     startBtn.disabled=false;
+    gifImg.style.display="none";
 };
 
-// Poem animation
+// Poem animation letter by letter
 function showPoemGIF(i){
     poemDiv.innerHTML="";
-    poems[i].split(" ").forEach((word,wordIdx)=>{
-        const wordSpan=document.createElement("span");
-        word.split("").forEach((c,idx)=>{
-            const span=document.createElement("span");
-            span.textContent=c;
-            span.className="letter";
-            span.style.animationDelay=`${(idx+wordIdx*word.length)*0.05}s`;
-            wordSpan.appendChild(span);
-        });
-        poemDiv.appendChild(wordSpan);
-        poemDiv.appendChild(document.createTextNode(" "));
-    });
+    const text=poems[i];
+    for(let idx=0; idx<text.length; idx++){
+        const span=document.createElement("span");
+        span.textContent=text[idx];
+        span.style.display="inline-block";
+        span.style.opacity="0";
+        span.style.animation=`letterFade 0.6s forwards`;
+        span.style.animationDelay=`${idx*0.05}s`;
+        poemDiv.appendChild(span);
+    }
     gifImg.src=gifs[i];
     poemDiv.style.display="block";
     gifImg.style.display="block";
     setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
 
-// Start
+// Start button
 startBtn.onclick=()=>{
     startBtn.style.display="none";
-    document.getElementById("countdownGif").style.display="none";
-    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    gifImg.style.display="none"; // remove countdown GIF
     showPoemGIF(index);
+    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
     const interval=setInterval(()=>{
         index++;
         if(index>=poems.length){
@@ -338,35 +327,26 @@ startBtn.onclick=()=>{
             bigHeart.style.display="block";
             heartHint.style.display="block";
             bigHeart.style.transform="scale(0)";
-            setTimeout(()=>{
-                bigHeart.style.transition="transform 2s";
-                bigHeart.style.transform="scale(1)";
-            },50);
-            // Show end video
-            endVideo.style.display="block";
-            endVideo.play();
+            setTimeout(()=>{ bigHeart.style.transition="transform 2s"; bigHeart.style.transform="scale(1)"; },50);
             return;
         }
         showPoemGIF(index);
     },4800);
 };
 
-// Final explosion on heart click
+// Big heart click shows video
 bigHeart.onclick=()=>{
     bigHeart.style.display="none";
     heartHint.style.display="none";
-    for(let i=0;i<50;i++){
-        const e=document.createElement("div");
-        e.className="explosion-heart";
-        e.innerHTML="❤️";
-        e.style.left="50%";
-        e.style.top="50%";
-        e.style.position="fixed";
-        e.style.fontSize=(Math.random()*40+20)+"px";
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),2000);
-    }
+    endVideo.style.display="block";
+    endVideo.play();
+    newYearText.innerHTML=`Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️`;
+    newYearText.classList.add("show");
+    replayBtn.style.display="inline-block";
 };
+
+// Replay
+replayBtn.onclick=()=>location.reload();
 </script>
 </body>
 </html>

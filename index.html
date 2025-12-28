@@ -39,7 +39,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
 /* Main card */
 .card {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.15);
     backdrop-filter: blur(14px);
     border-radius: 24px;
     padding: 40px 30px;
@@ -82,16 +82,19 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
+    word-wrap: break-word;
+    text-align: center;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
 /* Poem GIF */
 #gif {
-    width: 350px;
+    width: 300px;
     margin: 20px auto;
     opacity: 0;
     transform: scale(0.7);
     transition: opacity 1s, transform 1s;
+    display: block;
 }
 #gif.show { opacity: 1; transform: scale(1); }
 
@@ -112,9 +115,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Big heart */
 #bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-#heartHint { display: block; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
-
-/* End video placeholder removed per instructions */
+#heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
 
 /* Buttons */
 #startBtn, #replayBtn, #skipCountdown {
@@ -126,15 +127,19 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     color: white;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(255,182,193,0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.5s;
 }
 #startBtn:hover, #replayBtn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,182,193,0.7); }
+#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 
 /* Volume slider */
 #volumeSlider { position: fixed; bottom: 10px; left: 10px; width: 120px; z-index: 5; }
 
-/* Skip countdown tiny button */
-#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
+@keyframes letterFade { to { opacity:1; transform: translateY(0); } }
+
+.floating-heart { position: absolute; font-size: 16px; pointer-events: none; animation: heartRise 1s forwards; color: #ff69b4; }
+@keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
+
 </style>
 </head>
 <body>
@@ -156,7 +161,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="poem"></div>
     <img id="gif">
     <div id="bigHeart">❤️</div>
-    <div id="heartHint">Click on me baby 😊</div>
+    <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
     <button id="startBtn" disabled>Start 💌</button>
     <button id="replayBtn" style="display:none;">Replay 🔄</button>
@@ -177,16 +182,10 @@ frameborder="0" allow="autoplay"></iframe>
 // Fireworks
 const canvas=document.getElementById("fireworks"),ctx=canvas.getContext("2d");
 canvas.width=innerWidth; canvas.height=innerHeight;
-setInterval(()=>{ ctx.clearRect(0,0,canvas.width,canvas.height);
-for(let i=0;i<80;i++){ ctx.beginPath();
-ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height/2, 2,0,Math.PI*2);
-ctx.fillStyle=`hsl(${Math.random()*360},100%,70%)`;
-ctx.fill(); } },800);
+setInterval(()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=0;i<80;i++){ ctx.beginPath(); ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height/2, 2,0,Math.PI*2); ctx.fillStyle=`hsl(${Math.random()*360},100%,70%)`; ctx.fill(); } },800);
 
 // Floating hearts
-setInterval(()=>{ const h=document.createElement("div");
-h.className="heart"; h.innerHTML="❤️"; h.style.left=Math.random()*100+"vw";
-document.body.appendChild(h); setTimeout(()=>h.remove(),7000); },260);
+setInterval(()=>{ const h=document.createElement("div"); h.className="heart"; h.innerHTML="❤️"; h.style.left=Math.random()*100+"vw"; document.body.appendChild(h); setTimeout(()=>h.remove(),7000); },260);
 
 // Finger kiss follow
 const fingerKiss=document.getElementById("fingerKiss");
@@ -221,59 +220,42 @@ newYearText=document.getElementById("newYearText"),
 startBtn=document.getElementById("startBtn"),
 replayBtn=document.getElementById("replayBtn"),
 volumeSlider=document.getElementById("volumeSlider"),
-countdownDiv=document.getElementById("countdown"),
-skipBtn=document.getElementById("skipCountdown");
+countdownDiv=document.getElementById("countdown");
 
 let index=0;
 
-// Countdown function
+// Countdown
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
     const diff=nextYear-now;
     if(diff<=0){
-        countdownDiv.textContent="🎉 Happy New Year my beloved princess! 🎉";
+        countdownDiv.textContent="🎉 Happy New Year my beloved princess 🎉";
         startBtn.disabled=false;
         clearInterval(countdownInterval);
     } else {
         const hrs=Math.floor(diff/1000/60/60);
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
-        countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        countdownDiv.textContent=`Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
-skipBtn.onclick=()=>{
+
+skipCountdown.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.style.display="none";
-    document.getElementById("countdownGif").style.display="none";
-    startBtn.style.display="none";
+    countdownDiv.style.opacity=0;
+    startBtn.disabled=false;
 };
 
-// Poem animation
-function showPoemGIF(i){
-    poemDiv.innerHTML="";
-    poems[i].split(" ").forEach((word,idx)=>{
-        const span=document.createElement("span");
-        span.textContent=word+" ";
-        span.style.animation=`letterFade 0.6s forwards`;
-        span.style.animationDelay=`${idx*0.05}s`;
-        poemDiv.appendChild(span);
-    });
-    gifImg.src=gifs[i];
-    poemDiv.style.display="block";
-    gifImg.style.display="block";
-    poemDiv.style.textAlign="center";
-    gifImg.style.display="block";
-    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
-}
-
-// Start button
+// Start sequence
 startBtn.onclick=()=>{
-    startBtn.style.display="none";
-    document.getElementById("countdownGif").style.display="none";
-    countdownDiv.style.display="none";
+    startBtn.style.transition="opacity 0.5s"; startBtn.style.opacity=0;
+    countdownDiv.style.transition="opacity 0.5s"; countdownDiv.style.opacity=0;
+    countdownGif.style.transition="opacity 0.5s"; countdownGif.style.opacity=0;
+
+    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*');
     showPoemGIF(index);
     const interval=setInterval(()=>{
         index++;
@@ -291,76 +273,45 @@ startBtn.onclick=()=>{
     },4800);
 };
 
-// Big heart explosion
-bigHeart.onclick = () => {
-    bigHeart.style.display = "none";
-    heartHint.style.display = "none";
-
-    // Explode hundreds of little hearts in all directions
-    for (let i = 0; i < 200; i++) {
-        const e = document.createElement("div");
-        e.className = "explosion-heart";
-        e.innerHTML = "❤️";
-        e.style.position = "fixed";
-        e.style.left = "50%";
-        e.style.top = "50%";
-        e.style.fontSize = `${Math.random() * 20 + 10}px`;
-        e.style.color = `hsl(${Math.random() * 360}, 70%, 70%)`;
-        e.style.pointerEvents = "none";
-        e.style.zIndex = 5;
-        document.body.appendChild(e);
-
-        // Random velocity
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = Math.random() * 600 + 200;
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
-
-        e.animate([
-            { transform: `translate(0px, 0px)`, opacity: 1 },
-            { transform: `translate(${x}px, ${y}px)`, opacity: 0 }
-        ], {
-            duration: 2000 + Math.random() * 1000,
-            easing: "ease-out",
-            fill: "forwards"
-        });
-
-        setTimeout(() => e.remove(), 3000);
-    }
-
-    // Show final New Year text with GIF
-    setTimeout(() => {
-        newYearText.innerHTML = "Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
-        const finalImg = new Image();
-        finalImg.src = "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDIzeWFmYmFnaDNzdW5mcmVsa210YjFlcnE4YTR1N252dmlvemdjbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FETNK5hOJaanJsg0Sh/giphy.gif";
-        finalImg.style.width = "250px";
-        finalImg.style.display = "block";
-        finalImg.style.margin = "20px auto";
-        newYearText.appendChild(finalImg);
-        newYearText.classList.add("show");
-        replayBtn.style.display = "inline-block";
-    }, 1500);
-};
-
-// Volume slider
-volumeSlider.oninput = ()=>{
-    const volume = volumeSlider.value / 100;
-    ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+volume*100+']}', '*');
-};
-
-// YouTube fade out
-function fadeOutYT(duration){
-    const start = Date.now();
-    const vol = volumeSlider.value;
-    const fade = setInterval(()=>{
-        let elapsed = Date.now() - start;
-        let fraction = 1 - elapsed/duration;
-        if(fraction < 0) fraction = 0;
-        volumeSlider.value = vol * fraction;
-        ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+vol*fraction+']}', '*');
-        if(fraction===0) clearInterval(fade);
-    },100);
+// Show poem function
+function showPoemGIF(i){
+    poemDiv.innerHTML="";
+    poems[i].split("").forEach((c,idx)=>{
+        const span=document.createElement("span");
+        if(c===" ") { span.innerHTML="&nbsp;"; } else { span.textContent=c; }
+        span.style.animation=`letterFade 0.6s forwards`;
+        span.style.animationDelay=`${idx*0.05}s`;
+        poemDiv.appendChild(span);
+    });
+    gifImg.src=gifs[i];
+    poemDiv.style.display="block";
+    gifImg.style.display="block";
+    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
+
+// Heart click explosion
+bigHeart.onclick=()=>{
+    bigHeart.style.display="none"; heartHint.style.display="none";
+    for(let i=0;i<80;i++){
+        const e=document.createElement("div");
+        e.className="floating-heart";
+        e.innerHTML="❤️";
+        e.style.left=50 + Math.random()*100+"vw";
+        e.style.top=50 + Math.random()*100+"vh";
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),2500);
+    }
+    newYearText.innerHTML="Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
+    newYearText.classList.add("show");
+};
+
+// Volume control
+volumeSlider.oninput=()=>{
+    ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+volumeSlider.value+']}','*');
+};
+
+// Replay
+replayBtn.onclick=()=>location.reload();
 </script>
 </body>
 </html>

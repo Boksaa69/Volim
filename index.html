@@ -118,18 +118,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 #heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
 
-/* End video with heart frame */
-#endVideo {
-    width:90%;
-    max-width:640px;
-    margin:20px auto;
-    display:none;
-    border-radius:18px;
-    box-shadow:0 0 40px 5px #ff69b4, 0 0 80px 10px #ffb6c1;
-    border:6px solid #ff69b4;
-    z-index:5;
-}
-
 /* Buttons */
 #startBtn, #replayBtn {
     font-size: 1.5rem;
@@ -152,10 +140,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 </style>
 </head>
 <body>
-
-<video id="endVideo" loop autoplay muted playsinline>
-    <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
-</video>
 
 <canvas id="fireworks"></canvas>
 <div id="fingerKiss">💋</div>
@@ -258,8 +242,7 @@ startBtn=document.getElementById("startBtn"),
 replayBtn=document.getElementById("replayBtn"),
 volumeSlider=document.getElementById("volumeSlider"),
 countdownDiv=document.getElementById("countdown"),
-skipBtn=document.getElementById("skipCountdown"),
-endVideo=document.getElementById("endVideo");
+skipBtn=document.getElementById("skipCountdown");
 
 let index=0;
 
@@ -327,7 +310,6 @@ startBtn.onclick=()=>{
             heartHint.style.display="block";
             bigHeart.style.transform="scale(0)";
             setTimeout(()=>{ bigHeart.style.transition="transform 2s"; bigHeart.style.transform="scale(1)"; },50);
-            endVideo.style.display="block";
             return;
         }
         showPoemGIF(index);
@@ -349,9 +331,10 @@ bigHeart.onclick=()=>{
         document.body.appendChild(e);
         setTimeout(()=>e.remove(),2000);
     }
-    fadeOutYT(5000);
     setTimeout(()=>{
-        newYearText.innerHTML=`Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️`;
+        gifImg.src="https://media.giphy.com/media/3o7abB06u9bNzA8lu8/giphy.gif";
+        gifImg.style.display="block";
+        newYearText.innerHTML="Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️";
         newYearText.classList.add("show");
         replayBtn.style.display="inline-block";
     },500);

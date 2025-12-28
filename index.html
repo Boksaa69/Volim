@@ -15,7 +15,7 @@ body {
     overflow: hidden;
 }
 
-/* Fireworks */
+/* 🎆 Fireworks */
 canvas {
     position: fixed;
     top: 0;
@@ -23,7 +23,7 @@ canvas {
     z-index: 0;
 }
 
-/* Floating watermark */
+/* 💫 Floating watermark */
 .watermark {
     position: fixed;
     font-size: 14px;
@@ -40,7 +40,7 @@ canvas {
     100% { transform: translate(0,0); }
 }
 
-/* Card */
+/* ❤️ Main card */
 .card {
     background: rgba(255,255,255,0.12);
     backdrop-filter: blur(14px);
@@ -53,14 +53,14 @@ canvas {
     z-index: 2;
 }
 
-/* Text */
+/* 💬 Poem */
 #poem, #finalMessage, #newYearText {
     font-size: 1.5rem;
     line-height: 1.7;
     min-height: 140px;
     opacity: 0;
     transform: translateY(15px);
-    transition: opacity 1.5s ease, transform 1.5s ease;
+    transition: opacity 1.2s ease, transform 1.2s ease;
 }
 
 .show {
@@ -73,7 +73,7 @@ canvas {
     transform: translateY(-15px);
 }
 
-/* GIF */
+/* 💝 GIF */
 #gif {
     width: 170px;
     border-radius: 18px;
@@ -83,7 +83,7 @@ canvas {
 }
 #gif.show { opacity: 1; }
 
-/* Floating hearts */
+/* ❤️ Floating hearts */
 .heart {
     position: fixed;
     bottom: -10px;
@@ -99,12 +99,23 @@ canvas {
     100% { transform: translateY(-110vh); opacity: 0; }
 }
 
-/* Big heart */
+/* 💋 Poljubac follow */
+#fingerKiss {
+    position: fixed;
+    font-size: 20px;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: 3;
+}
+
+/* ❤️ Final heart */
 #bigHeart {
     display: none;
     font-size: 120px;
     cursor: pointer;
     animation: pulse 1.5s infinite;
+    margin-top: 10px;
 }
 
 @keyframes pulse {
@@ -113,12 +124,19 @@ canvas {
     100% { transform: scale(1); }
 }
 
-/* Explosion */
+#heartHint {
+    display: none;
+    font-size: 1.1rem;
+    opacity: 0.85;
+    margin-top: 8px;
+}
+
+/* 💥 Explosion */
 .explosion-heart {
     position: fixed;
     font-size: 20px;
     animation: explode 1.5s ease-out forwards;
-    z-index: 6;
+    z-index: 4;
 }
 
 @keyframes explode {
@@ -128,28 +146,7 @@ canvas {
     }
 }
 
-/* Cinematic */
-#cinema {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-}
-
-#cinemaHeart {
-    font-size: 140px;
-    animation: zoomHeart 8s ease-in forwards;
-}
-
-@keyframes zoomHeart {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(3.2); opacity: 1; }
-}
-
-/* Button */
+/* ▶️ Button */
 button {
     margin-top: 25px;
     background: white;
@@ -166,19 +163,17 @@ button {
 <body>
 
 <canvas id="fireworks"></canvas>
+<div id="fingerKiss">Poljubac 💋</div>
 <div class="watermark">Zana ❤️ Boris</div>
 
 <div class="card">
     <div id="poem"></div>
     <img id="gif">
     <div id="bigHeart">❤️</div>
+    <div id="heartHint">Click me for a surprise, baby 💖</div>
     <div id="finalMessage"></div>
     <div id="newYearText"></div>
     <button id="startBtn">Start 💌</button>
-</div>
-
-<div id="cinema">
-    <div id="cinemaHeart">❤️</div>
 </div>
 
 <audio id="music" loop>
@@ -186,9 +181,43 @@ button {
 </audio>
 
 <script>
+/* 🎆 Fireworks */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+setInterval(() => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (let i = 0; i < 80; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height/2, 2, 0, Math.PI*2);
+        ctx.fillStyle = `hsl(${Math.random()*360},100%,70%)`;
+        ctx.fill();
+    }
+}, 800);
+
+/* ❤️ Floating hearts */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
+}, 260);
+
+/* 💋 Follow */
+const fingerKiss = document.getElementById("fingerKiss");
+document.addEventListener("mousemove", e => {
+    fingerKiss.style.opacity = 1;
+    fingerKiss.style.left = e.clientX+"px";
+    fingerKiss.style.top = e.clientY+"px";
+});
+
+/* 💬 Poems + GIFs */
 const poems = [
-`Zana ❤️  
-Zahvalan sam za svaki dan sa tobom 😊`,
+`Zana ❤️  Zahvalan sam za svaki dan sa tobom 😊`,
 `Because of you, my heart feels lighter 💖`,
 `Hvala ti što me činiš boljim 🥰`,
 `You are my peace and my smile ✨`,
@@ -208,9 +237,9 @@ const gifs = [
 const poemDiv = document.getElementById("poem");
 const gifImg = document.getElementById("gif");
 const bigHeart = document.getElementById("bigHeart");
+const heartHint = document.getElementById("heartHint");
 const finalMessage = document.getElementById("finalMessage");
 const newYearText = document.getElementById("newYearText");
-const cinema = document.getElementById("cinema");
 const music = document.getElementById("music");
 const startBtn = document.getElementById("startBtn");
 
@@ -236,6 +265,7 @@ startBtn.onclick = () => {
                 poemDiv.style.display = "none";
                 gifImg.style.display = "none";
                 bigHeart.style.display = "block";
+                heartHint.style.display = "block";
                 return;
             }
             poemDiv.textContent = poems[index];
@@ -246,40 +276,34 @@ startBtn.onclick = () => {
     }, 4000);
 };
 
+/* 💥 NEW ENDING */
 bigHeart.onclick = () => {
     bigHeart.style.display = "none";
+    heartHint.style.display = "none";
+
+    for (let i = 0; i < 50; i++) {
+        const e = document.createElement("div");
+        e.className = "explosion-heart";
+        e.innerHTML = "❤️";
+        e.style.left = "50%";
+        e.style.top = "50%";
+        e.style.setProperty("--x", (Math.random()*600-300)+"px");
+        e.style.setProperty("--y", (Math.random()*600-300)+"px");
+        document.body.appendChild(e);
+        setTimeout(() => e.remove(), 2000);
+    }
 
     setTimeout(() => {
-        cinema.style.display = "flex";
-
-        setTimeout(() => {
-            cinema.style.display = "none";
-
-            for (let i = 0; i < 60; i++) {
-                const h = document.createElement("div");
-                h.className = "explosion-heart";
-                h.innerHTML = "❤️";
-                h.style.left = "50%";
-                h.style.top = "50%";
-                h.style.setProperty("--x", (Math.random()*700-350)+"px");
-                h.style.setProperty("--y", (Math.random()*700-350)+"px");
-                document.body.appendChild(h);
-                setTimeout(() => h.remove(), 1500);
-            }
-
-            newYearText.innerHTML =
-            `Happy New Year Baby 🎆<br>
-             I can't wait to explore the future with you ❤️`;
-            newYearText.classList.add("show");
-
-        }, 8200);
-
-    }, 800);
+        newYearText.innerHTML = `Happy New Year Baby 🎆<br>I can't wait to explore the future with you, Volim te,Zana tvoj Boris ❤️`;
+        newYearText.classList.add("show");
+    }, 1500);
 };
 </script>
 
 </body>
 </html>
+
+
 
 
 

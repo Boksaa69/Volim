@@ -82,8 +82,8 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
-    text-align: center;
     word-wrap: break-word;
+    white-space: normal;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
@@ -94,7 +94,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: scale(0.7);
     transition: opacity 1s, transform 1s;
-    display:block;
 }
 #gif.show { opacity: 1; transform: scale(1); }
 
@@ -137,8 +136,13 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Skip countdown tiny button */
 #skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 
-/* Cute fade-in letters */
-.letter { display: inline-block; opacity: 0; transform: translateY(15px); animation: letterFade 0.6s forwards; }
+/* Poem letter animation */
+.letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: letterFade 0.6s forwards;
+}
 .letter.space { display: inline-block; width: 0.5em; }
 @keyframes letterFade { to { opacity: 1; transform: translateY(0); } }
 </style>
@@ -250,53 +254,55 @@ skipBtn=document.getElementById("skipCountdown");
 
 let index=0;
 
-// Countdown function updateCountdown(){ 
+// Countdown function
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
     const diff=nextYear-now;
     if(diff<=0){
-        countdownDiv.textContent="🎉 Happy New Year! 🎉";
+        countdownDiv.textContent="🎉 Happy New Year my beloved princess! 🎉";
         startBtn.disabled=false;
         clearInterval(countdownInterval);
     } else {
         const hrs=Math.floor(diff/1000/60/60);
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
-        countdownDiv.textContent=`A little present for my little baby – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        const h=document.createElement("div");
-        h.className="countdown-heart";
-        h.innerHTML="❤️";
-        h.style.left=(gifImg.offsetLeft + gifImg.width/2 + (Math.random()*40-20))+"px";
-        h.style.top=(gifImg.offsetTop + Math.random()*20)+"px";
-        document.body.appendChild(h);
-        setTimeout(()=>h.remove(),800);
+        countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
+
+// Skip button
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
     countdownDiv.textContent="";
-    gifImg.style.display="none";
-    startBtn.style.display="none";
+    startBtn.disabled=false;
+    skipBtn.style.opacity=0;
 };
 
-// Poem animation (fixed spacing)
+// Poem animation
 function showPoemGIF(i){
     poemDiv.innerHTML="";
-    poems[i].split(/(\s+)/).forEach((c, idx) => {
+    const words = poems[i].split(" ");
+    words.forEach((word, wIdx)=>{
         const span = document.createElement("span");
-        span.textContent = c;
-        span.style.animation = `letterFade 0.6s forwards`;
-        span.style.animationDelay = `${idx*0.05}s`;
+        span.className="letter";
+        span.textContent=word;
         poemDiv.appendChild(span);
+        if(wIdx < words.length - 1){
+            const space = document.createElement("span");
+            space.innerHTML="&nbsp;";
+            poemDiv.appendChild(space);
+        }
     });
-    gifImg.src = gifs[i];
-    poemDiv.style.display = "block";
-    gifImg.style.display = "block";
-    setTimeout(() => { poemDiv.classList.add("show"); gifImg.classList.add("show"); }, 50);
+    gifImg.src=gifs[i];
+    poemDiv.style.display="block";
+    gifImg.style.display="block";
+    poemDiv.classList.add("show");
+    gifImg.classList.add("show");
 }
+
 </script>
 </body>
 </html>

@@ -5,11 +5,9 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Emoji-compatible font (no cursive) -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-/* ==================== Body & Background ==================== */
 body {
     margin: 0;
     font-family: 'Poppins', 'Noto Color Emoji', sans-serif;
@@ -19,12 +17,10 @@ body {
     overflow: hidden;
 }
 
-/* ==================== Fireworks ==================== */
-canvas {
-    position: fixed; top: 0; left: 0; z-index: 0;
-}
+/* Fireworks */
+canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
-/* ==================== Floating Watermarks ==================== */
+/* Floating watermarks */
 .watermark {
     position: fixed;
     font-size: 14px;
@@ -41,7 +37,7 @@ canvas {
     100% { transform: translate(0,0); }
 }
 
-/* ==================== Main Card ==================== */
+/* Main card */
 .card {
     background: rgba(255,255,255,0.2);
     backdrop-filter: blur(14px);
@@ -54,24 +50,20 @@ canvas {
     z-index: 3;
 }
 
-/* ==================== Countdown ==================== */
+/* Countdown */
 #countdown {
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #ffb6c1;
-    transition: opacity 1s;
 }
-
-/* Countdown GIF (hidden when start pressed) */
 #countdownGif {
     width: 200px;
     margin: 10px auto;
     display: block;
     position: relative;
-    transition: opacity 1s;
 }
 
-/* Countdown tiny heart effect */
+/* Tiny hearts for countdown */
 .countdown-heart {
     position: absolute;
     font-size: 18px;
@@ -80,7 +72,7 @@ canvas {
 }
 @keyframes rise { to { transform: translateY(-40px); opacity:0; } }
 
-/* ==================== Poem + GIF ==================== */
+/* Poem + messages */
 #poem, #newYearText {
     font-size: 1.6rem;
     line-height: 1.7;
@@ -95,24 +87,18 @@ canvas {
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
-/* GIFs under poems */
+/* Poem GIF */
 #gif {
-    width: 320px;
-    margin: 15px auto;
+    width: 350px;
+    margin: 20px auto;
     opacity: 0;
     transform: scale(0.7);
     transition: opacity 1s, transform 1s;
+    display:block;
 }
 #gif.show { opacity: 1; transform: scale(1); }
 
-/* Light box around poem + gif */
-#poem, #gif {
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 10px 15px;
-}
-
-/* ==================== Floating Hearts ==================== */
+/* Floating hearts */
 .heart {
     position: fixed;
     bottom: -10px;
@@ -131,7 +117,7 @@ canvas {
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 #heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
 
-/* ==================== Buttons ==================== */
+/* Buttons */
 #startBtn, #replayBtn, #skipCountdown {
     font-size: 1.5rem;
     padding: 12px 30px;
@@ -141,42 +127,33 @@ canvas {
     color: white;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(255,182,193,0.5);
-    transition: transform 0.2s, box-shadow 0.2s, opacity 0.5s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 #startBtn:hover, #replayBtn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,182,193,0.7); }
 
-/* Skip button slightly transparent */
-#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
-
-/* ==================== Volume Slider ==================== */
+/* Volume slider */
 #volumeSlider { position: fixed; bottom: 10px; left: 10px; width: 120px; z-index: 5; }
 
-/* ==================== Poem Letters Animation ==================== */
+/* Skip countdown tiny button */
+#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
+
+/* Cute fade-in letters */
 .letter { display: inline-block; opacity: 0; transform: translateY(15px); animation: letterFade 0.6s forwards; }
 .letter.space { display: inline-block; width: 0.5em; }
 @keyframes letterFade { to { opacity: 1; transform: translateY(0); } }
-
-/* ==================== Floating Heart Letters ==================== */
-.floating-heart { position: absolute; font-size: 16px; pointer-events: none; animation: heartRise 1s forwards; color: #ff69b4; }
-@keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
 </style>
 </head>
 <body>
 
-<!-- ==================== Fireworks Canvas ==================== -->
 <canvas id="fireworks"></canvas>
-
-<!-- ==================== Finger Kiss ==================== -->
 <div id="fingerKiss">💋</div>
 
-<!-- ==================== Floating Watermarks ==================== -->
 <div class="watermark">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 3s; font-size:16px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 6s; font-size:12px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 9s; font-size:14px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 12s; font-size:18px;">Zana ❤️ Boris</div>
 
-<!-- ==================== Card ==================== -->
 <div class="card">
     <div id="countdown"></div>
     <div style="position:relative;">
@@ -193,7 +170,7 @@ canvas {
 
 <button id="skipCountdown">Skip ⏩</button>
 
-<!-- ==================== YouTube Music Embed ==================== -->
+<!-- YouTube audio embed -->
 <div style="display:none;">
 <iframe id="ytplayer" width="0" height="0"
 src="https://www.youtube.com/embed/HNebPPVOGMY?start=16&enablejsapi=1&loop=1&playlist=HNebPPVOGMY&controls=0&disablekb=1&modestbranding=1"
@@ -203,7 +180,7 @@ frameborder="0" allow="autoplay"></iframe>
 <input type="range" id="volumeSlider" min="0" max="100" value="100">
 
 <script>
-/* ==================== Fireworks Animation ==================== */
+// Fireworks
 const canvas=document.getElementById("fireworks"),ctx=canvas.getContext("2d");
 canvas.width=innerWidth; canvas.height=innerHeight;
 setInterval(()=>{
@@ -216,7 +193,7 @@ setInterval(()=>{
     }
 },800);
 
-/* ==================== Floating Hearts ==================== */
+// Floating hearts
 setInterval(()=>{
     const h=document.createElement("div");
     h.className="heart";
@@ -226,7 +203,7 @@ setInterval(()=>{
     setTimeout(()=>h.remove(),7000);
 },260);
 
-/* ==================== Finger Kiss Follow ==================== */
+// Finger kiss follow
 const fingerKiss=document.getElementById("fingerKiss");
 document.addEventListener("mousemove",e=>{
     fingerKiss.style.opacity=1;
@@ -240,7 +217,7 @@ document.addEventListener("touchmove",e=>{
     fingerKiss.style.top=t.clientY+"px";
 });
 
-/* ==================== Elements ==================== */
+// Elements
 const ytplayer=document.getElementById("ytplayer"),
 poems=[
 "Zana ljubavi moja ❤️ Zahvalan sam za svaki dan i momenat sa tobom 😊",
@@ -273,21 +250,20 @@ skipBtn=document.getElementById("skipCountdown");
 
 let index=0;
 
-/* ==================== Countdown Function ==================== */
+// Countdown function updateCountdown(){ 
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
     const diff=nextYear-now;
     if(diff<=0){
-        countdownDiv.textContent="🎉 Happy New Year my beloved princess! 🎉";
+        countdownDiv.textContent="🎉 Happy New Year! 🎉";
         startBtn.disabled=false;
         clearInterval(countdownInterval);
     } else {
         const hrs=Math.floor(diff/1000/60/60);
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
-        countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        // tiny heart effect
+        countdownDiv.textContent=`A little present for my little baby – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
         const h=document.createElement("div");
         h.className="countdown-heart";
         h.innerHTML="❤️";
@@ -299,92 +275,28 @@ function updateCountdown(){
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
-
-/* Skip button */
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.style.opacity=0;
-    startBtn.disabled=false;
-    document.getElementById("countdownGif").style.opacity=0;
-    skipBtn.style.opacity=0;
+    countdownDiv.textContent="";
+    gifImg.style.display="none";
+    startBtn.style.display="none";
 };
 
-/* ==================== Poem Display Function ==================== */
+// Poem animation (fixed spacing)
 function showPoemGIF(i){
     poemDiv.innerHTML="";
-    poems[i].split(" ").forEach((word,idx)=>{
-        const span=document.createElement("span");
-        span.className="letter";
-        span.textContent=word + " ";
-        span.style.animation=`letterFade 0.6s forwards`;
-        span.style.animationDelay=`${idx*0.1}s`;
+    poems[i].split(/(\s+)/).forEach((c, idx) => {
+        const span = document.createElement("span");
+        span.textContent = c;
+        span.style.animation = `letterFade 0.6s forwards`;
+        span.style.animationDelay = `${idx*0.05}s`;
         poemDiv.appendChild(span);
     });
-    gifImg.src=gifs[i];
-    poemDiv.style.display="block";
-    gifImg.style.display="block";
-    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
+    gifImg.src = gifs[i];
+    poemDiv.style.display = "block";
+    gifImg.style.display = "block";
+    setTimeout(() => { poemDiv.classList.add("show"); gifImg.classList.add("show"); }, 50);
 }
-
-/* ==================== Start Button Click ==================== */
-startBtn.onclick=()=>{
-    startBtn.style.opacity=0;
-    document.getElementById("countdownGif").style.opacity=0;
-    countdownDiv.style.opacity=0;
-
-    // Play music immediately
-    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-
-    showPoemGIF(index);
-    const interval=setInterval(()=>{
-        index++;
-        if(index>=poems.length){
-            clearInterval(interval);
-            poemDiv.style.display="none";
-            gifImg.style.display="none";
-            bigHeart.style.display="block";
-            heartHint.style.display="block";
-            bigHeart.style.transform="scale(0)";
-            setTimeout(()=>{ bigHeart.style.transition="transform 2s"; bigHeart.style.transform="scale(1)"; },50);
-            return;
-        }
-        showPoemGIF(index);
-    },6000);
-};
-
-/* ==================== Big Heart Click ==================== */
-bigHeart.onclick=()=>{
-    bigHeart.style.display="none";
-    heartHint.style.display="none";
-    newYearText.innerHTML="Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
-    newYearText.classList.add("show");
-
-    // Exploding hearts effect
-    for(let i=0;i<50;i++){
-        const h=document.createElement("div");
-        h.className="floating-heart";
-        h.innerHTML="❤️";
-        h.style.left=Math.random()*100+"vw";
-        h.style.top=Math.random()*100+"vh";
-        h.style.fontSize=(10+Math.random()*20)+"px";
-        document.body.appendChild(h);
-        setTimeout(()=>h.remove(),2000+Math.random()*2000);
-    }
-
-    // Fade out music slowly
-    let vol=volumeSlider.value/100;
-    const fadeOut=setInterval(()=>{
-        vol-=0.01;
-        if(vol<=0){ vol=0; clearInterval(fadeOut); }
-        ytplayer.contentWindow.postMessage(`{"event":"command","func":"setVolume","args":[${vol*100}]}`, '*');
-    },100);
-};
-
-/* ==================== Volume Slider Control ==================== */
-volumeSlider.addEventListener("input",()=>{
-    const vol=volumeSlider.value/100;
-    ytplayer.contentWindow.postMessage(`{"event":"command","func":"setVolume","args":[${vol*100}]}`, '*');
-});
 </script>
 </body>
 </html>

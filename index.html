@@ -293,7 +293,6 @@ function showPoemGIF(i){
 
 // Heart click explosion
 bigHeart.onclick = () => {
-    // Fade out big heart and hint
     bigHeart.style.transition = "opacity 0.5s, transform 0.5s";
     bigHeart.style.opacity = 0;
     heartHint.style.transition = "opacity 0.5s";
@@ -303,12 +302,11 @@ bigHeart.onclick = () => {
     const centerX = rect.left + rect.width/2;
     const centerY = rect.top + rect.height/2;
 
-    // Create hundreds of floating hearts
     for (let i = 0; i < 200; i++){
         const e = document.createElement("div");
         e.className = "floating-heart";
         e.innerHTML = "❤️";
-        e.style.position = "fixed"; // important to position relative to viewport
+        e.style.position = "fixed";
         e.style.left = centerX + "px";
         e.style.top = centerY + "px";
 
@@ -330,31 +328,30 @@ bigHeart.onclick = () => {
         setTimeout(()=>e.remove(), duration + 100);
     }
 
-    // Show final text and image after a short delay
+    // Show final text and embed image
     setTimeout(()=>{
         newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
 
-        // Add image below the text
-        const img = document.createElement("img");
-        img.src = "https://i.imgur.com/yourImageID.png"; // <-- replace with your image URL
-        img.style.width = "250px";
-        img.style.marginTop = "20px";
-        img.style.borderRadius = "16px";
-        img.style.boxShadow = "0 10px 30px rgba(255,182,193,0.5)";
-        newYearText.appendChild(img);
+        // Imgur embed
+        const blockquote = document.createElement("blockquote");
+        blockquote.className = "imgur-embed-pub";
+        blockquote.setAttribute("lang","en");
+        blockquote.setAttribute("data-id","a/ENPP4OI");
+        const a = document.createElement("a");
+        a.href="//imgur.com/ENPP4OI";
+        blockquote.appendChild(a);
+        newYearText.appendChild(blockquote);
+
+        // Add Imgur embed script
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "//s.imgur.com/min/embed.js";
+        script.charset = "utf-8";
+        newYearText.appendChild(script);
 
         newYearText.classList.add("show");
     },200);
 };
-    
-    // Show final text after a short delay
-    setTimeout(()=>{
-        newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
-        newYearText.classList.add("show");
-    },200);
-};
-
-
 
 // Volume control
 volumeSlider.oninput=()=>{

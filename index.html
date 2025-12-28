@@ -5,7 +5,7 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 
 <style>
 body {
@@ -82,6 +82,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
+    white-space: pre-wrap; /* preserve spaces */
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
@@ -123,6 +124,8 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     border-radius:18px;
     box-shadow:0 0 40px 5px #ff69b4, 0 0 80px 10px #ffb6c1;
     border:6px solid #ff69b4;
+    position: relative;
+    z-index: 10; /* on top */
 }
 
 /* Buttons */
@@ -151,6 +154,10 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 </head>
 <body>
 
+<video id="endVideo" loop autoplay muted playsinline>
+    <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
+</video>
+
 <canvas id="fireworks"></canvas>
 <div id="fingerKiss">💋</div>
 
@@ -171,9 +178,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="bigHeart">❤️</div>
     <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
-    <video id="endVideo" loop autoplay muted playsinline>
-        <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
-    </video>
     <button id="startBtn" disabled>Start 💌</button>
     <button id="replayBtn" style="display:none;">Replay 🔄</button>
 </div>
@@ -291,6 +295,7 @@ skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
     startBtn.disabled=false;
     gifImg.style.display="none";
+    countdownDiv.style.display="none";
 };
 
 // Poem animation letter by letter
@@ -315,6 +320,7 @@ function showPoemGIF(i){
 // Start button
 startBtn.onclick=()=>{
     startBtn.style.display="none";
+    countdownDiv.style.display="none";
     gifImg.style.display="none"; // remove countdown GIF
     showPoemGIF(index);
     ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
@@ -340,13 +346,10 @@ bigHeart.onclick=()=>{
     heartHint.style.display="none";
     endVideo.style.display="block";
     endVideo.play();
-    newYearText.innerHTML=`Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️`;
+    newYearText.innerHTML=`Happy New Year Baby 🎆\nI can’t wait to explore the future with you ❤️`;
     newYearText.classList.add("show");
-    replayBtn.style.display="inline-block";
+    endVideo.scrollIntoView({behavior:"smooth"});
 };
-
-// Replay
-replayBtn.onclick=()=>location.reload();
 </script>
 </body>
 </html>

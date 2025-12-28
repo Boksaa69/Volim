@@ -5,13 +5,13 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Use Noto Color Emoji for full emoji support -->
+<!-- Emoji-supporting font -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Noto Color Emoji', sans-serif;
+    font-family: 'Noto Color Emoji', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Emoji', sans-serif;
     background: radial-gradient(circle at bottom, #1b0036, #000);
     color: white;
     text-align: center;
@@ -49,7 +49,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     box-shadow: 0 20px 50px rgba(0,0,0,0.45);
     position: relative;
     z-index: 3;
-    word-break: normal;
 }
 
 /* Countdown */
@@ -84,7 +83,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
-    word-wrap: break-word;
+    word-break: normal;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
@@ -110,12 +109,23 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 @keyframes float { 0% { transform: translateY(0); opacity:0; } 10%{opacity:1;} 100%{transform:translateY(-110vh);opacity:0;} }
 
 /* Finger kiss follow */
-#fingerKiss { position: fixed; font-size: 20px; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; z-index: 4; }
+#fingerKiss { position: fixed; font-size: 20px; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; z-index: 4; cursor: none; }
 
 /* Big heart */
-#bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; }
+#bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; z-index: 5; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 #heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
+
+/* Final text above GIF */
+#finalText {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: #fff;
+    margin-top: 15px;
+    opacity: 0;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+    transition: opacity 1s, transform 1s;
+}
 
 /* Buttons */
 #startBtn, #replayBtn, #skipCountdown {
@@ -127,20 +137,15 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     color: white;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(255,182,193,0.5);
-    transition: transform 0.2s, box-shadow 0.2s, opacity 1s;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.8s;
 }
 #startBtn:hover, #replayBtn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,182,193,0.7); }
+#startBtn.fade { opacity: 0; pointer-events: none; }
 
-#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.03; z-index: 5; cursor:pointer; }
+#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.2; z-index: 5; cursor:pointer; }
 
 /* Volume slider */
 #volumeSlider { position: fixed; bottom: 10px; left: 10px; width: 120px; z-index: 5; }
-
-/* Fade letters animation */
-@keyframes letterFade { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-.letter { display: inline-block; animation: letterFade 0.6s forwards; }
-.letter.space { width: 0.5em; display: inline-block; }
-
 </style>
 </head>
 <body>
@@ -148,7 +153,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 <canvas id="fireworks"></canvas>
 <div id="fingerKiss">💋</div>
 
-<!-- Floating watermarks -->
 <div class="watermark">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 3s; font-size:16px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 6s; font-size:12px;">Zana ❤️ Boris</div>
@@ -164,11 +168,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <img id="gif">
     <div id="bigHeart">❤️</div>
     <div id="heartHint">Click me for a surprise 💖</div>
-    <div id="newYearText"></div>
-    <div id="finalImageContainer" style="display:none;">
-        <!-- Placeholder for final image -->
-        <img id="finalImage" src="" style="width:80%; max-width:500px; margin:20px auto; display:block; border-radius:16px;">
-    </div>
+    <div id="finalText"></div>
     <button id="startBtn" disabled>Start 💌</button>
     <button id="replayBtn" style="display:none;">Replay 🔄</button>
 </div>
@@ -247,17 +247,16 @@ gifImg=document.getElementById("gif"),
 bigHeart=document.getElementById("bigHeart"),
 heartHint=document.getElementById("heartHint"),
 newYearText=document.getElementById("newYearText"),
+finalText=document.getElementById("finalText"),
 startBtn=document.getElementById("startBtn"),
 replayBtn=document.getElementById("replayBtn"),
 volumeSlider=document.getElementById("volumeSlider"),
 countdownDiv=document.getElementById("countdown"),
-skipBtn=document.getElementById("skipCountdown"),
-finalImageContainer=document.getElementById("finalImageContainer"),
-finalImage=document.getElementById("finalImage");
+skipBtn=document.getElementById("skipCountdown");
 
 let index=0;
 
-// Countdown function
+// Countdown with tiny heart
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
@@ -270,8 +269,9 @@ function updateCountdown(){
         const hrs=Math.floor(diff/1000/60/60);
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
-        countdownDiv.textContent=`A little present for my little baby – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        // tiny hearts
+        countdownDiv.textContent=`Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        
+        // Tiny heart on countdown
         const h=document.createElement("div");
         h.className="countdown-heart";
         h.innerHTML="❤️";
@@ -283,34 +283,17 @@ function updateCountdown(){
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
-
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
     countdownDiv.textContent="";
     startBtn.disabled=false;
 };
 
-// Poem animation function
-function showPoemGIF(i){
-    poemDiv.innerHTML="";
-    poems[i].split("").forEach((c,idx)=>{
-        const span=document.createElement("span");
-        if(c===" ") { span.className="letter space"; span.innerHTML="&nbsp;"; }
-        else { span.className="letter"; span.textContent=c; }
-        span.style.animationDelay=`${idx*0.05}s`;
-        poemDiv.appendChild(span);
-    });
-    gifImg.src=gifs[i];
-    poemDiv.style.display="block";
-    gifImg.style.display="block";
-    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
-}
-
-// Start sequence
+// Start button click
 startBtn.onclick=()=>{
-    startBtn.style.opacity=0; // fade away
-    countdownDiv.textContent=""; // remove countdown
-    gifImg.style.display="none"; // remove initial gif
+    startBtn.classList.add("fade");  // fade away start button
+    countdownGif.style.display="none"; // hide countdown gif
+    countdownDiv.style.display="none"; // hide countdown text
     ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
     showPoemGIF(index);
     const interval=setInterval(()=>{
@@ -329,34 +312,94 @@ startBtn.onclick=()=>{
     },4800);
 };
 
-// Heart click explosion and final text + gif
+// Poem animation
+function showPoemGIF(i){
+    poemDiv.innerHTML="";
+    poems[i].split(" ").forEach((word,idx)=>{
+        const span=document.createElement("span");
+        span.textContent=word + " ";
+        span.style.animation=`letterFade 0.6s forwards`;
+        span.style.animationDelay=`${idx*0.05}s`;
+        poemDiv.appendChild(span);
+    });
+    gifImg.src=gifs[i];
+    poemDiv.style.display="block";
+    gifImg.style.display="block";
+    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
+}
+
+// Heart click explosion
 bigHeart.onclick=()=>{
     bigHeart.style.display="none";
     heartHint.style.display="none";
-    for(let i=0;i<100;i++){
+    for(let i=0;i<60;i++){
         const e=document.createElement("div");
-        e.className="explosion-heart";
+        e.className="heart";
         e.innerHTML="❤️";
         e.style.position="fixed";
         e.style.left="50%";
         e.style.top="50%";
-        e.style.fontSize="24px";
-        e.style.transform=`translate(0,0)`;
-        e.style.color="#ff69b4";
-        const x=(Math.random()*window.innerWidth)-window.innerWidth/2;
-        const y=(Math.random()*window.innerHeight)-window.innerHeight/2;
-        e.animate([{transform:'translate(0,0)'},{transform:`translate(${x}px,${y}px)`}],{duration:1500,fill:'forwards'});
+        e.style.fontSize=(Math.random()*30+10)+"px";
+        e.style.opacity=1;
+        e.style.transition="all 2s linear";
+        const x=(Math.random()*2-1)*window.innerWidth;
+        const y=(Math.random()*2-1)*window.innerHeight;
+        setTimeout(()=>{
+            e.style.transform=`translate(${x}px, ${y}px)`;
+            e.style.opacity=0;
+        },50);
         document.body.appendChild(e);
-        setTimeout(()=>e.remove(),1600);
+        setTimeout(()=>e.remove(),2000);
     }
-    setTimeout(()=>{
-        finalImageContainer.style.display="block";
-        finalImage.src="https://via.placeholder.com/500x300.png?text=Your+Final+Text+Here"; // placeholder, replace later
-        gifImg.src=gifs[poems.length-1];
-        gifImg.style.display="block";
-        gifImg.classList.add("show");
-    },1600);
+   
+    // Show final text after heart explosion
+    finalText.innerHTML = "Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
+    finalText.style.opacity = "1";
+    finalText.style.transform = "translateY(0)";
+
+    // Show final loving GIF again
+    gifImg.style.display = "block";
+    gifImg.classList.add("show");
+
+    // Show replay button
+    replayBtn.style.display = "inline-block";
 };
-</script>
-</body>
-</html>
+
+// Volume slider control (YouTube API volume fix)
+volumeSlider.addEventListener("input", () => {
+    const vol = volumeSlider.value;
+    ytplayer.contentWindow.postMessage(
+        JSON.stringify({
+            event: "command",
+            func: "setVolume",
+            args: [vol]
+        }),
+        "*"
+    );
+});
+
+// Replay logic (full reset, nothing deleted)
+replayBtn.onclick = () => {
+    index = 0;
+    finalText.style.opacity = 0;
+    gifImg.style.display = "none";
+    replayBtn.style.display = "none";
+    poemDiv.style.display = "block";
+    ytplayer.contentWindow.postMessage(
+        JSON.stringify({
+            event: "command",
+            func: "seekTo",
+            args: [5, true]
+        }),
+        "*"
+    );
+    ytplayer.contentWindow.postMessage(
+        JSON.stringify({
+            event: "command",
+            func: "playVideo",
+            args: ""
+        }),
+        "*"
+    );
+    showPoemGIF(index);
+};

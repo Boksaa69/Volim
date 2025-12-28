@@ -294,41 +294,50 @@ function showPoemGIF(i){
 // Heart click explosion
 bigHeart.onclick = () => {
     // Fade out big heart and hint
-    bigHeart.style.transition = "opacity 0.5s";
+    bigHeart.style.transition = "opacity 0.5s, transform 0.5s";
     bigHeart.style.opacity = 0;
     heartHint.style.transition = "opacity 0.5s";
     heartHint.style.opacity = 0;
 
+    const rect = bigHeart.getBoundingClientRect();
+    const centerX = rect.left + rect.width/2;
+    const centerY = rect.top + rect.height/2;
+
     // Create hundreds of floating hearts
-    for (let i = 0; i < 150; i++){
+    for (let i = 0; i < 200; i++){
         const e = document.createElement("div");
         e.className = "floating-heart";
         e.innerHTML = "❤️";
-
-        const rect = bigHeart.getBoundingClientRect();
-        e.style.left = rect.left + rect.width/2 + "px";
-        e.style.top = rect.top + rect.height/2 + "px";
+        e.style.position = "fixed"; // important to position relative to viewport
+        e.style.left = centerX + "px";
+        e.style.top = centerY + "px";
 
         const angle = Math.random() * 2 * Math.PI;
-        const distance = 150 + Math.random()*150;
-        const xMove = Math.cos(angle)*distance;
-        const yMove = Math.sin(angle)*distance;
+        const distance = 150 + Math.random()*200;
+        const xMove = Math.cos(angle) * distance;
+        const yMove = Math.sin(angle) * distance;
+        const scale = 0.3 + Math.random() * 0.7;
+        const duration = 1500 + Math.random()*1000;
 
-        e.style.transition = `transform 2s ease-out, opacity 2s ease-out`;
+        e.style.transition = `transform ${duration}ms ease-out, opacity ${duration}ms ease-out`;
         document.body.appendChild(e);
 
-        setTimeout(()=>{ 
-            e.style.transform = `translate(${xMove}px, ${yMove}px) scale(${0.5 + Math.random()})`;
+        setTimeout(()=>{
+            e.style.transform = `translate(${xMove}px, ${yMove}px) scale(${scale})`;
             e.style.opacity = 0;
         },50);
 
-        setTimeout(()=>e.remove(),2500 + Math.random()*500);
+        setTimeout(()=>e.remove(), duration + 100);
     }
 
-    // Show final text above the GIF
-    newYearText.innerHTML = "Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
-    newYearText.classList.add("show");
+    // Show final text after a short delay
+    setTimeout(()=>{
+        newYearText.innerHTML = "Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
+        newYearText.classList.add("show");
+    },200);
 };
+
+
 
 // Volume control
 volumeSlider.oninput=()=>{

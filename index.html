@@ -161,7 +161,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="poem"></div>
     <img id="gif">
     <div id="bigHeart">❤️</div>
-    <div id="heartHint">Click on me baby 😊</div>
+    <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
     <button id="startBtn" disabled>Start 💌</button>
     <button id="replayBtn" style="display:none;">Replay 🔄</button>
@@ -220,8 +220,7 @@ newYearText=document.getElementById("newYearText"),
 startBtn=document.getElementById("startBtn"),
 replayBtn=document.getElementById("replayBtn"),
 volumeSlider=document.getElementById("volumeSlider"),
-countdownDiv=document.getElementById("countdown"),
-skipCountdown=document.getElementById("skipCountdown");
+countdownDiv=document.getElementById("countdown");
 
 let index=0;
 
@@ -246,7 +245,6 @@ updateCountdown();
 
 skipCountdown.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.style.transition="opacity 0.5s";
     countdownDiv.style.opacity=0;
     startBtn.disabled=false;
 };
@@ -291,43 +289,46 @@ function showPoemGIF(i){
     setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
 
-// Heart click explosion
+// Heart click explosion with hundreds of hearts
 bigHeart.onclick = () => {
-    // Fade out big heart and hint
-    bigHeart.style.transition = "opacity 0.5s";
-    bigHeart.style.opacity = 0;
-    heartHint.style.transition = "opacity 0.5s";
-    heartHint.style.opacity = 0;
+    bigHeart.style.display = "none"; 
+    heartHint.style.display = "none";
 
-    // Create hundreds of floating hearts
-    for (let i = 0; i < 150; i++){
-        const e = document.createElement("div");
-        e.className = "floating-heart";
-        e.innerHTML = "❤️";
+    // Text under heart before explosion
+    heartHint.innerHTML = "Click on me baby 😊"; 
+    heartHint.style.display = "block";
+    heartHint.style.opacity = "1";
 
-        const rect = bigHeart.getBoundingClientRect();
-        e.style.left = rect.left + rect.width/2 + "px";
-        e.style.top = rect.top + rect.height/2 + "px";
+    for(let i=0;i<200;i++){
+        const e=document.createElement("div");
+        e.className="floating-heart";
+        e.innerHTML="❤️";
 
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = 150 + Math.random()*150;
-        const xMove = Math.cos(angle)*distance;
-        const yMove = Math.sin(angle)*distance;
+        const rect=bigHeart.getBoundingClientRect();
+        const startX=rect.left + rect.width/2;
+        const startY=rect.top + rect.height/2;
+        e.style.left=startX + (Math.random()*100 - 50) + "px";
+        e.style.top=startY + (Math.random()*100 - 50) + "px";
 
-        e.style.transition = `transform 2s ease-out, opacity 2s ease-out`;
+        const dx=Math.random()*200-100;
+        const dy=Math.random()*200-100;
+        const duration=1000+Math.random()*1000;
+
+        e.style.transition=`transform ${duration}ms ease-out, opacity ${duration}ms ease-out`;
         document.body.appendChild(e);
 
-        setTimeout(()=>{ 
-            e.style.transform = `translate(${xMove}px, ${yMove}px) scale(${0.5 + Math.random()})`;
-            e.style.opacity = 0;
+        setTimeout(()=>{
+            e.style.transform=`translate(${dx}px, ${dy}px) scale(${Math.random()*0.7 + 0.3})`;
+            e.style.opacity=0;
         },50);
 
-        setTimeout(()=>e.remove(),2500 + Math.random()*500);
+        setTimeout(()=>e.remove(), duration+100);
     }
 
-    // Show final text above the GIF
-    newYearText.innerHTML = "Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
-    newYearText.classList.add("show");
+    setTimeout(()=>{
+        newYearText.innerHTML="Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
+        newYearText.classList.add("show");
+    },1200);
 };
 
 // Volume control

@@ -42,7 +42,7 @@ canvas {
 
 /* ❤️ Main card */
 .card {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.2); /* slightly more visible */
     backdrop-filter: blur(14px);
     border-radius: 24px;
     padding: 40px 30px;
@@ -58,19 +58,16 @@ canvas {
     font-size: 1.5rem;
     line-height: 1.7;
     min-height: 140px;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(20px);
     transition: opacity 1s ease, transform 1s ease;
 }
 
 .show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hide {
-    opacity: 0;
-    transform: translateY(-15px);
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
 /* 💝 GIF */
@@ -234,20 +231,19 @@ const poems = [
 ];
 
 const gifs = [
-"https://media.giphy.com/media/l0ExdMHUDKteztyfe/giphy.gif", // couple hugging
-"https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif", // animated heart
-"https://media.giphy.com/media/xUPGcguWZHRC2HyBRS/giphy.gif", // kiss
-"https://media.giphy.com/media/l2JhLzK0QOLkVwM2g/giphy.gif", // cute couple hugging
-"https://media.giphy.com/media/l2JHRhAtnJSDNJ2py/giphy.gif", // heart explosion
-"https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif", // love hearts
-"https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"  // kiss hearts
+"https://media.giphy.com/media/l0ExdMHUDKteztyfe/giphy.gif",
+"https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif",
+"https://media.giphy.com/media/xUPGcguWZHRC2HyBRS/giphy.gif",
+"https://media.giphy.com/media/l2JhLzK0QOLkVwM2g/giphy.gif",
+"https://media.giphy.com/media/l2JHRhAtnJSDNJ2py/giphy.gif",
+"https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif",
+"https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
 ];
 
 const poemDiv = document.getElementById("poem");
 const gifImg = document.getElementById("gif");
 const bigHeart = document.getElementById("bigHeart");
 const heartHint = document.getElementById("heartHint");
-const finalMessage = document.getElementById("finalMessage");
 const newYearText = document.getElementById("newYearText");
 const music = document.getElementById("music");
 const startBtn = document.getElementById("startBtn");
@@ -257,61 +253,53 @@ let index = 0;
 startBtn.onclick = () => {
     startBtn.style.display = "none";
     music.play();
-
-    poemDiv.style.display = "block";
-    gifImg.style.display = "block";
-    poemDiv.textContent = poems[index];
-    gifImg.src = gifs[index];
-    poemDiv.classList.add("show");
-    gifImg.classList.add("show");
+    showPoemGIF(index);
 
     const interval = setInterval(() => {
-        poemDiv.classList.remove("show");
-        gifImg.classList.remove("show");
-
-        setTimeout(() => {
-            index++;
-            if (index >= poems.length) {
-                clearInterval(interval);
-                poemDiv.style.display = "none";
-                gifImg.style.display = "none";
-                bigHeart.style.display = "block";
-                heartHint.style.display = "block";
-                // slow zoom cinematic
-                bigHeart.style.transform = "scale(0)";
-                setTimeout(() => { bigHeart.style.transition = "transform 2s ease"; bigHeart.style.transform = "scale(1)"; }, 50);
-                return;
-            }
-            poemDiv.textContent = poems[index];
-            gifImg.src = gifs[index];
-            poemDiv.classList.add("show");
-            gifImg.classList.add("show");
-        }, 800);
-
-    }, 4800); // 4s visible + 0.8s fade
+        index++;
+        if(index >= poems.length){
+            clearInterval(interval);
+            poemDiv.style.display = "none";
+            gifImg.style.display = "none";
+            bigHeart.style.display = "block";
+            heartHint.style.display = "block";
+            bigHeart.style.transform = "scale(0)";
+            setTimeout(()=>{ bigHeart.style.transition = "transform 2s ease"; bigHeart.style.transform="scale(1)";},50);
+            return;
+        }
+        showPoemGIF(index);
+    }, 4800);
 };
 
-/* 💥 Cinematic heart explosion and final message */
+function showPoemGIF(i){
+    poemDiv.textContent = poems[i];
+    gifImg.src = gifs[i];
+    poemDiv.style.display="block";
+    gifImg.style.display="block";
+    setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
+}
+
+/* 💥 Heart explosion */
 bigHeart.onclick = () => {
     bigHeart.style.display = "none";
     heartHint.style.display = "none";
 
-    for (let i = 0; i < 50; i++) {
+    for(let i=0;i<50;i++){
         const e = document.createElement("div");
-        e.className = "explosion-heart";
-        e.innerHTML = "❤️";
-        e.style.left = "50%";
-        e.style.top = "50%";
-        e.style.setProperty("--x", (Math.random()*600-300)+"px");
-        e.style.setProperty("--y", (Math.random()*600-300)+"px");
+        e.className="explosion-heart";
+        e.innerHTML="❤️";
+        e.style.left="50%";
+        e.style.top="50%";
+        e.style.setProperty("--x",(Math.random()*600-300)+"px");
+        e.style.setProperty("--y",(Math.random()*600-300)+"px");
         document.body.appendChild(e);
-        setTimeout(() => e.remove(), 2000);
+        setTimeout(()=>e.remove(),2000);
     }
 
-    setTimeout(() => {
+    setTimeout(()=>{
         newYearText.innerHTML = `Happy New Year Baby 🎆<br>I can't wait to explore the future with you ❤️`;
         newYearText.classList.add("show");
-    }, 1500);
+    },1500);
 };
 </script>
 

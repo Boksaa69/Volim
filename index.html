@@ -5,12 +5,13 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<!-- Font that supports all emojis -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Poppins', 'Noto Color Emoji', 'Segoe UI Emoji', sans-serif;
+    font-family: 'Noto Color Emoji', sans-serif;
     background: radial-gradient(circle at bottom, #1b0036, #000);
     color: white;
     text-align: center;
@@ -49,7 +50,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     position: relative;
     z-index: 3;
     word-wrap: break-word;
-    white-space: normal;
 }
 
 /* Countdown */
@@ -85,7 +85,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
     word-wrap: break-word;
-    white-space: normal;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
 
@@ -116,10 +115,17 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Big heart */
 #bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-#heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
+#heartHint { display: none; font-size: 1.1rem; opacity: 0.5; margin-top: 8px; }
+
+/* Final image after heart */
+#finalImage {
+    width: 250px;
+    margin: 20px auto;
+    display: none;
+}
 
 /* Buttons */
-#startBtn, #replayBtn {
+#startBtn, #replayBtn, #skipCountdown {
     font-size: 1.5rem;
     padding: 12px 30px;
     border: none;
@@ -131,12 +137,11 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     transition: transform 0.2s, box-shadow 0.2s, opacity 1s;
 }
 #startBtn:hover, #replayBtn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,182,193,0.7); }
+#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 
-/* Skip countdown tiny button */
-#skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.03; z-index: 5; cursor:pointer; }
-
-/* Volume slider */
-#volumeSlider { position: fixed; bottom: 10px; left: 10px; width: 120px; z-index: 5; }
+/* Floating heart letters */
+.floating-heart { position: absolute; font-size: 16px; pointer-events: none; animation: heartRise 1s forwards; color: #ff69b4; }
+@keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
 </style>
 </head>
 <body>
@@ -160,6 +165,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="bigHeart">❤️</div>
     <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
+    <img id="finalImage" src="https://media3.giphy.com/media/FETNK5hOJaanJsg0Sh/giphy.gif">
     <button id="startBtn" disabled>Start 💌</button>
     <button id="replayBtn" style="display:none;">Replay 🔄</button>
 </div>
@@ -242,11 +248,12 @@ startBtn=document.getElementById("startBtn"),
 replayBtn=document.getElementById("replayBtn"),
 volumeSlider=document.getElementById("volumeSlider"),
 countdownDiv=document.getElementById("countdown"),
-skipBtn=document.getElementById("skipCountdown");
+skipBtn=document.getElementById("skipCountdown"),
+finalImage=document.getElementById("finalImage");
 
 let index=0;
 
-// Countdown with tiny heart
+// Countdown
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
@@ -259,21 +266,15 @@ function updateCountdown(){
         const hrs=Math.floor(diff/1000/60/60);
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
-        countdownDiv.textContent=`Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        const h=document.createElement("div");
-        h.className="countdown-heart";
-        h.innerHTML="❤️";
-        h.style.left=(gifImg.offsetLeft + gifImg.width/2 + (Math.random()*40-20))+"px";
-        h.style.top=(gifImg.offsetTop + Math.random()*20)+"px";
-        document.body.appendChild(h);
-        setTimeout(()=>h.remove(),800);
+        countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.textContent="";
+    countdownDiv.style.display="none";
+    countdownGif.style.display="none";
     startBtn.disabled=false;
 };
 
@@ -294,11 +295,16 @@ function showPoemGIF(i){
     setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
 
-// Start button
-startBtn.onclick=()=>{
+// Start
+startBtn.onclick = () => {
     countdownDiv.style.display="none";
     countdownGif.style.display="none";
+    startBtn.style.transition="opacity 1s";
     startBtn.style.opacity="0";
+
+    // Play music after user interaction
+    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+
     showPoemGIF(index);
     const interval=setInterval(()=>{
         index++;
@@ -316,35 +322,42 @@ startBtn.onclick=()=>{
     },4800);
 };
 
-// Big heart click
-bigHeart.onclick=()=>{
+// Heart click explosion
+bigHeart.onclick = () => {
     bigHeart.style.display="none";
     heartHint.style.display="none";
-    for(let i=0;i<50;i++){
+
+    for(let i=0;i<100;i++){
         const e=document.createElement("div");
         e.className="explosion-heart";
         e.innerHTML="❤️";
+        e.style.position="fixed";
         e.style.left="50%";
         e.style.top="50%";
-        e.style.setProperty("--x",(Math.random()*600-300)+"px");
-        e.style.setProperty("--y",(Math.random()*600-300)+"px");
+        e.style.fontSize="24px";
+        e.style.zIndex=10;
+        const angle=Math.random()*2*Math.PI;
+        const radius=300+Math.random()*300;
+        e.style.transform=`translate(${Math.cos(angle)*radius}px, ${Math.sin(angle)*radius}px)`;
         document.body.appendChild(e);
         setTimeout(()=>e.remove(),2000);
     }
+
     setTimeout(()=>{
-        gifImg.src="https://media.giphy.com/media/3o7abB06u9bNzA8lu8/giphy.gif";
-        gifImg.style.display="block";
         newYearText.innerHTML="Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️";
         newYearText.classList.add("show");
+        finalImage.style.display="block";
         replayBtn.style.display="inline-block";
-    },500);
+    },1000);
 };
 
-// Replay button
-replayBtn.onclick=()=>{ location.reload(); };
+// Replay
+replayBtn.onclick=()=>location.reload();
 
-// Volume slider
-volumeSlider.oninput=()=>{ ytplayer.contentWindow.postMessage(`{"event":"command","func":"setVolume","args":[${volumeSlider.value}]}`, '*'); };
+// Volume
+volumeSlider.oninput=()=>{ 
+    ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+volumeSlider.value+']}','*'); 
+};
 </script>
 </body>
 </html>

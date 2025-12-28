@@ -5,12 +5,12 @@
 <title>For Zana ❤️</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Pacifico', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: radial-gradient(circle at bottom, #1b0036, #000);
     color: white;
     text-align: center;
@@ -27,7 +27,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0.6;
     z-index: 2;
     animation: floatWM 18s linear infinite;
-    font-family: 'Pacifico', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', cursive;
     color: #ffb6c1;
 }
 @keyframes floatWM {
@@ -53,7 +52,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
 /* Countdown */
 #countdown {
-    font-family: 'Pacifico', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', cursive;
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #ffb6c1;
@@ -62,8 +60,17 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     width: 200px;
     margin: 10px auto;
     display: block;
-    transition: transform 0.2s;
+    position: relative;
 }
+
+/* Tiny hearts for countdown */
+.countdown-heart {
+    position: absolute;
+    font-size: 18px;
+    color: #ff69b4;
+    animation: rise 0.8s forwards;
+}
+@keyframes rise { to { transform: translateY(-40px); opacity:0; } }
 
 /* Poem + messages */
 #poem, #newYearText {
@@ -75,19 +82,8 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 1s, transform 1s;
-    font-family: 'Pacifico', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', cursive;
 }
 .show { opacity: 1 !important; transform: translateY(0) !important; }
-
-/* Cute fade-in letters */
-.letter {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(15px);
-    animation: letterFade 0.6s forwards;
-}
-.letter.space { display: inline-block; width: 0.5em; }
-@keyframes letterFade { to { opacity: 1; transform: translateY(0); } }
 
 /* Poem GIF */
 #gif {
@@ -110,40 +106,27 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 }
 @keyframes float { 0% { transform: translateY(0); opacity:0; } 10%{opacity:1;} 100%{transform:translateY(-110vh);opacity:0;} }
 
-/* Floating heart letters */
-.floating-heart {
-    position: absolute;
-    font-size: 16px;
-    pointer-events: none;
-    animation: heartRise 1s forwards;
-    color: #ff69b4;
-}
-@keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
-
-/* Poljubac follow */
+/* Finger kiss follow */
 #fingerKiss { position: fixed; font-size: 20px; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; z-index: 4; }
 
 /* Big heart */
 #bigHeart { display: none; font-size: 120px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; transition: transform 1.5s ease; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-#heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; font-family: 'Pacifico','Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji', cursive; }
+#heartHint { display: none; font-size: 1.1rem; opacity: 0.85; margin-top: 8px; }
 
 /* End video with heart frame */
 #endVideo {
     width:90%;
     max-width:640px;
     margin:20px auto;
-    display:block;
+    display:none;
     border-radius:18px;
     box-shadow:0 0 40px 5px #ff69b4, 0 0 80px 10px #ffb6c1;
     border:6px solid #ff69b4;
-    position:relative;
-    z-index:3;
 }
 
 /* Buttons */
 #startBtn, #replayBtn, #skipCountdown {
-    font-family: 'Pacifico','Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji', cursive;
     font-size: 1.5rem;
     padding: 12px 30px;
     border: none;
@@ -163,13 +146,11 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 #skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 </style>
 </head>
-
 <body>
 
 <canvas id="fireworks"></canvas>
-<div id="fingerKiss">Poljubac 💋</div>
+<div id="fingerKiss">💋</div>
 
-<!-- Floating watermarks -->
 <div class="watermark">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 3s; font-size:16px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 6s; font-size:12px;">Zana ❤️ Boris</div>
@@ -178,13 +159,15 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
 <div class="card">
     <div id="countdown"></div>
-    <img id="countdownGif" src="https://media.giphy.com/media/3o7abB06u9bNzA8lu8/giphy.gif">
+    <div style="position:relative;">
+        <img id="countdownGif" src="https://media.giphy.com/media/3o7abB06u9bNzA8lu8/giphy.gif">
+    </div>
     <div id="poem"></div>
     <img id="gif">
     <div id="bigHeart">❤️</div>
-    <div id="heartHint">Click me for a surprise, baby 💖</div>
+    <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
-    <video id="endVideo" loop autoplay muted playsinline style="display:none;">
+    <video id="endVideo" loop autoplay muted playsinline>
         <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
     </video>
     <button id="startBtn" disabled>Start 💌</button>
@@ -203,7 +186,7 @@ frameborder="0" allow="autoplay"></iframe>
 <input type="range" id="volumeSlider" min="0" max="100" value="100">
 
 <script>
-// Fireworks animation
+// Fireworks
 const canvas=document.getElementById("fireworks"),ctx=canvas.getContext("2d");
 canvas.width=innerWidth; canvas.height=innerHeight;
 setInterval(()=>{
@@ -242,13 +225,15 @@ document.addEventListener("touchmove",e=>{
 
 // Elements
 const ytplayer=document.getElementById("ytplayer"),
-poems=[`Zana ljubavi moja ❤️ Zahvalan sam za svaki dan i momenat sa tobom 😊`,
-`Because of you, my heart feels lighter 💖`,
-`Hvala ti što me činiš boljim i srecnijim 🥰`,
-`You are my peace, my smile, my happiness and my home ✨`,
-`Sa tobom je sve lepše, sladje bebo ❤️`,
-`I am grateful for you, always and forever 🌹`,
-`Thank you for all the happiness, all the love and all the laughs 😊`],
+poems=[
+"Zana ljubavi moja ❤️ Zahvalan sam za svaki dan i momenat sa tobom 😊",
+"Because of you, my heart feels lighter 💖",
+"Hvala ti što me činiš boljim i srecnijim 🥰",
+"You are my peace, my smile, my happiness and my home ✨",
+"Sa tobom je sve lepše, sladje bebo ❤️",
+"I am grateful for you, always and forever 🌹",
+"Thank you for all the happiness, all the love and all the laughs 😊"
+],
 gifs=[
 "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExc29iZ2M5Z3RncmsxMzdqenp2dmtiM2p3a3FoNTB2ZnFob2cyZ2toYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1JmGiBtqTuehfYxuy9/giphy.gif",
 "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExd3c0OTQwOG15OW90bGg2dHhzNHp4d3l5eTZrcjF3d2QwZTFiNXN4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QEN54dmAJuTF0wBWXz/giphy.gif",
@@ -272,7 +257,7 @@ endVideo=document.getElementById("endVideo");
 
 let index=0;
 
-// Countdown
+// Countdown with tiny heart
 function updateCountdown(){
     const now=new Date();
     const nextYear=new Date(now.getFullYear()+1,0,1);
@@ -286,10 +271,14 @@ function updateCountdown(){
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
         countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        startBtn.disabled=true;
-        // Pulse countdown GIF heart effect
-        gifImg.style.transform="scale(1.05)";
-        setTimeout(()=>{ gifImg.style.transform="scale(1)"; },300);
+        // Emit tiny heart
+        const h=document.createElement("div");
+        h.className="countdown-heart";
+        h.innerHTML="❤️";
+        h.style.left=(gifImg.offsetLeft + gifImg.width/2 + (Math.random()*40-20))+"px";
+        h.style.top=(gifImg.offsetTop + Math.random()*20)+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),800);
     }
 }
 const countdownInterval=setInterval(updateCountdown,1000);
@@ -300,24 +289,14 @@ skipBtn.onclick=()=>{
     startBtn.disabled=false;
 };
 
-// Poem animation with tiny hearts
+// Poem animation
 function showPoemGIF(i){
     poemDiv.innerHTML="";
     poems[i].split("").forEach((c,idx)=>{
         const span=document.createElement("span");
-        if(c===" ") { span.className="letter space"; span.innerHTML="&nbsp;"; }
-        else { span.className="letter"; span.textContent=c; }
-        span.addEventListener("animationstart", ()=>{
-            if(c!==" "){
-                const heart=document.createElement("div");
-                heart.className="floating-heart";
-                const rect=span.getBoundingClientRect();
-                heart.style.left=rect.left+window.scrollX+"px";
-                heart.style.top=rect.top+window.scrollY+"px";
-                document.body.appendChild(heart);
-                setTimeout(()=>heart.remove(),1000);
-            }
-        });
+        if(c===" ") { span.innerHTML="&nbsp;"; }
+        else { span.textContent=c; }
+        span.style.animation=`letterFade 0.6s forwards`;
         span.style.animationDelay=`${idx*0.05}s`;
         poemDiv.appendChild(span);
     });
@@ -326,68 +305,6 @@ function showPoemGIF(i){
     gifImg.style.display="block";
     setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
-
-// Fade audio
-function fadeOutYT(d){
-    let vol=100;
-    const step=vol/d*50;
-    const fInterval=setInterval(()=>{
-        vol-=step;
-        if(vol<=0){ clearInterval(fInterval); ytplayer.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}','*'); }
-        else ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+vol+']}','*');
-    },50);
-}
-
-// Start
-startBtn.onclick=()=>{
-    startBtn.style.display="none";
-    ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    showPoemGIF(index);
-    const interval=setInterval(()=>{
-        index++;
-        if(index>=poems.length){
-            clearInterval(interval);
-            poemDiv.style.display="none";
-            gifImg.style.display="none";
-            bigHeart.style.display="block";
-            heartHint.style.display="block";
-            bigHeart.style.transform="scale(0)";
-            setTimeout(()=>{ bigHeart.style.transition="transform 2s"; bigHeart.style.transform="scale(1)"; },50);
-            return;
-        }
-        showPoemGIF(index);
-    },4800);
-};
-
-// Final explosion + show end video
-bigHeart.onclick=()=>{
-    bigHeart.style.display="none";
-    heartHint.style.display="none";
-    for(let i=0;i<50;i++){
-        const e=document.createElement("div");
-        e.className="explosion-heart";
-        e.innerHTML="❤️";
-        e.style.left="50%";
-        e.style.top="50%";
-        e.style.setProperty("--x",(Math.random()*600-300)+"px");
-        e.style.setProperty("--y",(Math.random()*600-300)+"px");
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),2000);
-    }
-    fadeOutYT(5000);
-    setTimeout(()=>{
-        newYearText.innerHTML=`Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️`;
-        newYearText.classList.add("show");
-        endVideo.style.display="block";
-        replayBtn.style.display="inline-block";
-    },1500);
-};
-
-// Replay
-replayBtn.onclick=()=>location.reload();
-
-// Volume
-volumeSlider.oninput=()=>{ ytplayer.contentWindow.postMessage('{"event":"command","func":"setVolume","args":['+volumeSlider.value+']}','*'); };
 </script>
 </body>
 </html>

@@ -123,6 +123,8 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     border-radius:18px;
     box-shadow:0 0 40px 5px #ff69b4, 0 0 80px 10px #ffb6c1;
     border:6px solid #ff69b4;
+    z-index: 2;
+    position: relative;
 }
 
 /* Buttons */
@@ -145,9 +147,14 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 /* Skip countdown tiny button */
 #skipCountdown { position: fixed; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.05; z-index: 5; cursor:pointer; }
 
-/* Letter fade animation */
-@keyframes letterFade { to { opacity: 1; transform: translateY(0); } }
+/* Poem letter fade */
+.letter { display: inline-block; opacity: 0; transform: translateY(15px); animation: letterFade 0.6s forwards; }
+.letter.space { display: inline-block; width: 0.5em; }
+@keyframes letterFade { to { opacity:1; transform:translateY(0); } }
 
+/* Floating hearts on end video */
+.explosion-heart, .floating-heart { font-size: 22px; position: absolute; animation: floatEnd 2s ease-out forwards; z-index:3; }
+@keyframes floatEnd { 0% {transform: translate(0,0); opacity:1;} 100% {transform: translate(var(--x), var(--y)); opacity:0;} }
 </style>
 </head>
 <body>
@@ -155,7 +162,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 <canvas id="fireworks"></canvas>
 <div id="fingerKiss">💋</div>
 
-<!-- Watermarks -->
 <div class="watermark">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 3s; font-size:16px;">Zana ❤️ Boris</div>
 <div class="watermark" style="animation-delay: 6s; font-size:12px;">Zana ❤️ Boris</div>
@@ -172,7 +178,7 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
     <div id="bigHeart">❤️</div>
     <div id="heartHint">Click me for a surprise 💖</div>
     <div id="newYearText"></div>
-    <video id="endVideo" loop autoplay muted playsinline>
+    <video id="endVideo" loop muted playsinline>
         <source src="https://dl.dropboxusercontent.com/s/coyo2hxjm4ldcxl94q2or/20251228_190424.mp4" type="video/mp4">
     </video>
     <button id="startBtn" disabled>Start 💌</button>
@@ -181,7 +187,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 
 <button id="skipCountdown">Skip ⏩</button>
 
-<!-- YouTube audio embed -->
 <div style="display:none;">
 <iframe id="ytplayer" width="0" height="0"
 src="https://www.youtube.com/embed/kvazBqAlx58?start=5&enablejsapi=1&loop=1&playlist=kvazBqAlx58&controls=0&disablekb=1&modestbranding=1"
@@ -192,7 +197,7 @@ frameborder="0" allow="autoplay"></iframe>
 
 <script>
 // Fireworks
-const canvas=document.getElementById("fireworks"),ctx=canvas.getContext("2d");
+const canvas=document.getElementById("fireworks"), ctx=canvas.getContext("2d");
 canvas.width=innerWidth; canvas.height=innerHeight;
 setInterval(()=>{
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -276,7 +281,6 @@ function updateCountdown(){
         const mins=Math.floor(diff/1000/60)%60;
         const secs=Math.floor(diff/1000)%60;
         countdownDiv.textContent=`A little present for my little baby 🎁 – Time till New Year: ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        // Emit tiny heart
         const h=document.createElement("div");
         h.className="countdown-heart";
         h.innerHTML="❤️";
@@ -288,10 +292,13 @@ function updateCountdown(){
 }
 const countdownInterval=setInterval(updateCountdown,1000);
 updateCountdown();
+
+// Skip button
 skipBtn.onclick=()=>{
     clearInterval(countdownInterval);
-    countdownDiv.textContent="🎉 Let's celebrate early! 🎉";
+    countdownDiv.style.display="none";
     startBtn.disabled=false;
+    startBtn.click(); // trigger first poem
 };
 
 // Poem animation
@@ -299,9 +306,8 @@ function showPoemGIF(i){
     poemDiv.innerHTML="";
     poems[i].split("").forEach((c,idx)=>{
         const span=document.createElement("span");
-        if(c===" ") { span.innerHTML="&nbsp;"; }
-        else { span.textContent=c; }
-        span.style.animation=`letterFade 0.6s forwards`;
+        if(c===" ") { span.className="letter space"; span.innerHTML="&nbsp;"; }
+        else { span.className="letter"; span.textContent=c; }
         span.style.animationDelay=`${idx*0.05}s`;
         poemDiv.appendChild(span);
     });
@@ -311,7 +317,7 @@ function showPoemGIF(i){
     setTimeout(()=>{ poemDiv.classList.add("show"); gifImg.classList.add("show"); },50);
 }
 
-// Start button
+// Start
 startBtn.onclick=()=>{
     startBtn.style.display="none";
     ytplayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
@@ -324,8 +330,7 @@ startBtn.onclick=()=>{
             gifImg.style.display="none";
             bigHeart.style.display="block";
             heartHint.style.display="block";
-            bigHeart.style.transform="scale(0)";
-            setTimeout(()=>{ bigHeart.style.transition="transform 2s"; bigHeart.style.transform="scale(1)"; },50);
+            setTimeout(()=>{ bigHeart.style.transform="scale(1)"; },50);
             return;
         }
         showPoemGIF(index);
@@ -349,15 +354,10 @@ bigHeart.onclick=()=>{
     }
     endVideo.style.display="block";
     endVideo.play();
-    setTimeout(()=>{
-        newYearText.innerHTML=`Happy New Year Baby 🎆<br>I can’t wait to explore the future with you ❤️`;
-        newYearText.classList.add("show");
-        replayBtn.style.display="inline-block";
-    },1500);
 };
 
 // Replay
-replayBtn.onclick=()=>location.reload();
+replayBtn.onclick=()=>{ location.reload(); };
 </script>
 </body>
 </html>

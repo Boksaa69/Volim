@@ -15,7 +15,6 @@ body {
     overflow: hidden;
 }
 
-/* 🎆 Fireworks */
 canvas {
     position: fixed;
     top: 0;
@@ -23,17 +22,22 @@ canvas {
     z-index: 0;
 }
 
-/* 🖋️ Watermark */
 .watermark {
     position: fixed;
-    bottom: 12px;
-    right: 16px;
     font-size: 14px;
     opacity: 0.6;
     z-index: 3;
+    animation: drift 18s linear infinite;
 }
 
-/* ❤️ Main card */
+@keyframes drift {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(80vw,10vh); }
+    50% { transform: translate(50vw,70vh); }
+    75% { transform: translate(10vw,50vh); }
+    100% { transform: translate(0,0); }
+}
+
 .card {
     background: rgba(255,255,255,0.12);
     backdrop-filter: blur(14px);
@@ -46,27 +50,27 @@ canvas {
     z-index: 2;
 }
 
-/* 💬 Poem text */
-#poem, #finalMessage {
-    font-size: 1.5rem;
+#poem {
+    font-size: 1.45rem;
     line-height: 1.7;
-    min-height: 140px;
+    min-height: 120px;
     opacity: 0;
     transform: translateY(15px);
-    transition: opacity 1.5s ease, transform 1.5s ease;
+    transition: 1.2s ease;
 }
 
-#poem.show, #finalMessage.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+#poem.show { opacity: 1; transform: translateY(0); }
+#poem.hide { opacity: 0; transform: translateY(-15px); }
 
-#poem.hide {
+#gif {
+    margin-top: 15px;
+    width: 160px;
+    border-radius: 16px;
     opacity: 0;
-    transform: translateY(-15px);
+    transition: opacity 1.2s ease;
 }
+#gif.show { opacity: 1; }
 
-/* ❤️ Floating hearts */
 .heart {
     position: fixed;
     bottom: -10px;
@@ -82,7 +86,6 @@ canvas {
     100% { transform: translateY(-110vh); opacity: 0; }
 }
 
-/* 💋 Poljubac follow */
 #fingerKiss {
     position: fixed;
     font-size: 20px;
@@ -92,7 +95,6 @@ canvas {
     z-index: 3;
 }
 
-/* ❤️ Final heart */
 #bigHeart {
     display: none;
     font-size: 120px;
@@ -107,7 +109,13 @@ canvas {
     100% { transform: scale(1); }
 }
 
-/* 💥 Explosion hearts */
+#heartText {
+    display: none;
+    margin-top: 10px;
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
 .explosion-heart {
     position: fixed;
     font-size: 20px;
@@ -122,7 +130,27 @@ canvas {
     }
 }
 
-/* ▶️ Start button */
+/* 🎬 Cinematic ending */
+#cinema {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+#cinemaHeart {
+    font-size: 140px;
+    animation: zoom 12s ease-in forwards;
+}
+
+@keyframes zoom {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(3.2); opacity: 1; }
+}
+
 button {
     margin-top: 25px;
     background: white;
@@ -132,12 +160,6 @@ button {
     border-radius: 30px;
     font-size: 1rem;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.1);
-    background: #ffe6ee;
 }
 </style>
 </head>
@@ -150,146 +172,86 @@ button:hover {
 
 <div class="card">
     <div id="poem"></div>
+    <img id="gif">
     <div id="bigHeart">❤️</div>
-    <div id="finalMessage"></div>
+    <div id="heartText">Click me for a surprise, baby 💖</div>
     <button id="startBtn">Start 💌</button>
 </div>
 
+<div id="cinema">
+    <div id="cinemaHeart">❤️</div>
+</div>
+
 <audio id="music" loop>
-    <source src="https://cdn.pixabay.com/audio/2023/03/27/audio_9f7d58bdf7.mp3">
+    <source src="https://cdn.pixabay.com/audio/2022/10/26/audio_67f7a6cbb4.mp3">
 </audio>
 
 <script>
-/* 🎆 Fireworks */
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
-
-setInterval(() => {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for (let i = 0; i < 80; i++) {
-        ctx.beginPath();
-        ctx.arc(
-            Math.random()*canvas.width,
-            Math.random()*canvas.height/2,
-            2, 0, Math.PI*2
-        );
-        ctx.fillStyle = `hsl(${Math.random()*360},100%,70%)`;
-        ctx.fill();
-    }
-}, 800);
-
-/* ❤️ Floating hearts */
-setInterval(() => {
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.innerHTML = "❤️";
-    h.style.left = Math.random()*100+"vw";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 7000);
-}, 260);
-
-/* 💋 Poljubac follow */
-const fingerKiss = document.getElementById("fingerKiss");
-document.addEventListener("mousemove", e => {
-    fingerKiss.style.opacity = 1;
-    fingerKiss.style.left = e.clientX+"px";
-    fingerKiss.style.top = e.clientY+"px";
-});
-document.addEventListener("touchmove", e => {
-    const t = e.touches[0];
-    fingerKiss.style.opacity = 1;
-    fingerKiss.style.left = t.clientX+"px";
-    fingerKiss.style.top = t.clientY+"px";
-});
-
-/* 💬 Poems */
 const poems = [
 `Zana ❤️  
-Zahvalan sam za svaki dan sa tobom.  
-Ti si moja sreća 😊`,
+Zahvalan sam za svaki trenutak sa tobom 😊`,
+`Because of you, my heart finally feels home 💖`,
+`Hvala ti što me činiš boljim 🥰`,
+`You are my peace, my smile, my love ✨`,
+`Sa tobom sam istinski srećan ❤️`
+];
 
-`Because of you,  
-my days feel warmer  
-and my heart feels lighter 💖`,
-
-`Hvala ti što me činiš boljim,  
-što me razumeš i voliš 🥰`,
-
-`You are the reason  
-I smile without trying,  
-and love without fear ✨`,
-
-`Sa tobom je sve lakše,  
-lepše i smislenije ❤️`,
-
-`You make happiness feel natural,  
-like it was always meant to be 💫`,
-
-`Zbog tebe verujem u ljubav  
-više nego ikada 💕`,
-
-`I am grateful for you,  
-today, tomorrow, always 🌹`
+const gifs = [
+"https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif",
+"https://media.giphy.com/media/l0MYyDa8S9ghzNebm/giphy.gif",
+"https://media.giphy.com/media/3oriO6qJiXajN0TyDu/giphy.gif",
+"https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif",
+"https://media.giphy.com/media/26FLdmIp6wJr91JAI/giphy.gif"
 ];
 
 const poemDiv = document.getElementById("poem");
-const bigHeart = document.getElementById("bigHeart");
-const finalMessage = document.getElementById("finalMessage");
-const music = document.getElementById("music");
+const gifImg = document.getElementById("gif");
 const startBtn = document.getElementById("startBtn");
+const music = document.getElementById("music");
+const bigHeart = document.getElementById("bigHeart");
+const heartText = document.getElementById("heartText");
+const cinema = document.getElementById("cinema");
 
 let index = 0;
 
-function startPoems() {
+startBtn.onclick = () => {
     startBtn.style.display = "none";
     music.play();
 
     poemDiv.classList.add("show");
+    gifImg.classList.add("show");
     poemDiv.textContent = poems[index];
+    gifImg.src = gifs[index];
 
     const interval = setInterval(() => {
         poemDiv.classList.add("hide");
+        gifImg.classList.remove("show");
 
         setTimeout(() => {
             index++;
             if (index >= poems.length) {
                 clearInterval(interval);
                 poemDiv.style.display = "none";
+                gifImg.style.display = "none";
                 bigHeart.style.display = "block";
+                heartText.style.display = "block";
                 return;
             }
             poemDiv.textContent = poems[index];
+            gifImg.src = gifs[index];
             poemDiv.classList.remove("hide");
-        }, 1500);
+            gifImg.classList.add("show");
+        }, 1200);
+    }, 4000);
+};
 
-    }, 6000);
-}
-
-startBtn.addEventListener("click", startPoems);
-
-/* 💥 Heart explosion + final message */
-bigHeart.addEventListener("click", () => {
-    for (let i = 0; i < 40; i++) {
-        const e = document.createElement("div");
-        e.className = "explosion-heart";
-        e.innerHTML = "❤️";
-        e.style.left = "50%";
-        e.style.top = "50%";
-        e.style.setProperty("--x", (Math.random()*400-200)+"px");
-        e.style.setProperty("--y", (Math.random()*400-200)+"px");
-        document.body.appendChild(e);
-        setTimeout(() => e.remove(), 1500);
-    }
-
+bigHeart.onclick = () => {
     bigHeart.style.display = "none";
-
+    heartText.style.display = "none";
     setTimeout(() => {
-        finalMessage.innerHTML = `Volim te zauvek, Zana ❤️<br><br>Tvoj Boris`;
-        finalMessage.classList.add("show");
-    }, 800);
-});
+        cinema.style.display = "flex";
+    }, 1200);
+};
 </script>
 
 </body>

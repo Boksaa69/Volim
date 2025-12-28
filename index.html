@@ -140,22 +140,6 @@ canvas { position: fixed; top: 0; left: 0; z-index: 0; }
 .floating-heart { position: absolute; font-size: 16px; pointer-events: none; animation: heartRise 1s forwards; color: #ff69b4; }
 @keyframes heartRise { to { transform: translateY(-50px); opacity:0; } }
 
-/* Responsive Imgur embed */
-.embedContainer {
-    opacity: 0;
-    transition: opacity 1s ease, transform 1s ease;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-.embedContainer.showEmbed {
-    opacity: 1;
-    transform: scale(0.85);
-}
-.embedContainer iframe, .embedContainer blockquote {
-    max-width: 90%;
-    width: 300px;
-}
 </style>
 </head>
 <body>
@@ -309,6 +293,7 @@ function showPoemGIF(i){
 
 // Heart click explosion
 bigHeart.onclick = () => {
+    // Fade out big heart and hint
     bigHeart.style.transition = "opacity 0.5s, transform 0.5s";
     bigHeart.style.opacity = 0;
     heartHint.style.transition = "opacity 0.5s";
@@ -318,11 +303,12 @@ bigHeart.onclick = () => {
     const centerX = rect.left + rect.width/2;
     const centerY = rect.top + rect.height/2;
 
+    // Create hundreds of floating hearts
     for (let i = 0; i < 200; i++){
         const e = document.createElement("div");
         e.className = "floating-heart";
         e.innerHTML = "❤️";
-        e.style.position = "fixed";
+        e.style.position = "fixed"; // important to position relative to viewport
         e.style.left = centerX + "px";
         e.style.top = centerY + "px";
 
@@ -344,21 +330,31 @@ bigHeart.onclick = () => {
         setTimeout(()=>e.remove(), duration + 100);
     }
 
-    // Imgur embed container
-    const embedContainer = document.createElement("div");
-    embedContainer.className = "embedContainer";
-    embedContainer.innerHTML = `<blockquote class="imgur-embed-pub" lang="en" data-id="a/ENPP4OI"><a href="//imgur.com/ENPP4OI"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>`;
+    // Show final text and image after a short delay
+    setTimeout(()=>{
+        newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
 
-    newYearText.parentNode.insertBefore(embedContainer, newYearText);
+        // Add image below the text
+        const img = document.createElement("img");
+        img.src = "https://i.imgur.com/yourImageID.png"; // <-- replace with your image URL
+        img.style.width = "250px";
+        img.style.marginTop = "20px";
+        img.style.borderRadius = "16px";
+        img.style.boxShadow = "0 10px 30px rgba(255,182,193,0.5)";
+        newYearText.appendChild(img);
 
-    setTimeout(()=>{ embedContainer.classList.add("showEmbed"); },50);
-
-    // Show final text
+        newYearText.classList.add("show");
+    },200);
+};
+    
+    // Show final text after a short delay
     setTimeout(()=>{
         newYearText.innerHTML = "❤️Happy New Year my beloved, you made this one amazing and I can't wait to spend the next one with you ❤️";
         newYearText.classList.add("show");
     },200);
 };
+
+
 
 // Volume control
 volumeSlider.oninput=()=>{

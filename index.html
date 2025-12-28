@@ -60,7 +60,7 @@ canvas {
     min-height: 140px;
     opacity: 0;
     transform: translateY(15px);
-    transition: opacity 1.2s ease, transform 1.2s ease;
+    transition: opacity 1s ease, transform 1s ease;
 }
 
 .show {
@@ -79,7 +79,7 @@ canvas {
     border-radius: 18px;
     margin-top: 15px;
     opacity: 0;
-    transition: opacity 1.2s ease;
+    transition: opacity 1s ease;
 }
 #gif.show { opacity: 1; }
 
@@ -114,8 +114,9 @@ canvas {
     display: none;
     font-size: 120px;
     cursor: pointer;
-    animation: pulse 1.5s infinite;
     margin-top: 10px;
+    animation: pulse 1.5s infinite;
+    transition: transform 1.5s ease;
 }
 
 @keyframes pulse {
@@ -207,31 +208,39 @@ setInterval(() => {
     setTimeout(() => h.remove(), 7000);
 }, 260);
 
-/* 💋 Follow */
+/* 💋 Follow mouse & touch */
 const fingerKiss = document.getElementById("fingerKiss");
 document.addEventListener("mousemove", e => {
     fingerKiss.style.opacity = 1;
     fingerKiss.style.left = e.clientX+"px";
     fingerKiss.style.top = e.clientY+"px";
 });
+document.addEventListener("touchmove", e => {
+    const t = e.touches[0];
+    fingerKiss.style.opacity = 1;
+    fingerKiss.style.left = t.clientX+"px";
+    fingerKiss.style.top = t.clientY+"px";
+});
 
 /* 💬 Poems + GIFs */
 const poems = [
-`Zana ❤️  Zahvalan sam za svaki dan sa tobom 😊`,
+`Zana ljubavi moja❤️ Zahvalan sam za svaki dan i momenat sa tobom 😊`,
 `Because of you, my heart feels lighter 💖`,
-`Hvala ti što me činiš boljim 🥰`,
-`You are my peace and my smile ✨`,
-`Sa tobom je sve lepše ❤️`,
-`I am grateful for you, always 🌹`
+`Hvala ti što me činiš boljim i srecnijim 🥰`,
+`You are my peace, my smile and my home✨`,
+`Sa tobom je sve lepše i sladje ❤️`,
+`I am grateful for you, always and forever 🌹`,
+`Thank you for all the happiness, all the love and all the laughs😊`
 ];
 
 const gifs = [
-"https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif",
-"https://media.giphy.com/media/l0MYyDa8S9ghzNebm/giphy.gif",
-"https://media.giphy.com/media/3oriO6qJiXajN0TyDu/giphy.gif",
-"https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif",
-"https://media.giphy.com/media/26FLdmIp6wJr91JAI/giphy.gif",
-"https://media.giphy.com/media/3oz8xIsloV7zOmt81G/giphy.gif"
+"https://media.giphy.com/media/l0ExdMHUDKteztyfe/giphy.gif", // couple hugging
+"https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif", // animated heart
+"https://media.giphy.com/media/xUPGcguWZHRC2HyBRS/giphy.gif", // kiss
+"https://media.giphy.com/media/l2JhLzK0QOLkVwM2g/giphy.gif", // cute couple hugging
+"https://media.giphy.com/media/l2JHRhAtnJSDNJ2py/giphy.gif", // heart explosion
+"https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif", // love hearts
+"https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"  // kiss hearts
 ];
 
 const poemDiv = document.getElementById("poem");
@@ -249,13 +258,15 @@ startBtn.onclick = () => {
     startBtn.style.display = "none";
     music.play();
 
-    poemDiv.classList.add("show");
-    gifImg.classList.add("show");
+    poemDiv.style.display = "block";
+    gifImg.style.display = "block";
     poemDiv.textContent = poems[index];
     gifImg.src = gifs[index];
+    poemDiv.classList.add("show");
+    gifImg.classList.add("show");
 
     const interval = setInterval(() => {
-        poemDiv.classList.add("hide");
+        poemDiv.classList.remove("show");
         gifImg.classList.remove("show");
 
         setTimeout(() => {
@@ -266,17 +277,21 @@ startBtn.onclick = () => {
                 gifImg.style.display = "none";
                 bigHeart.style.display = "block";
                 heartHint.style.display = "block";
+                // slow zoom cinematic
+                bigHeart.style.transform = "scale(0)";
+                setTimeout(() => { bigHeart.style.transition = "transform 2s ease"; bigHeart.style.transform = "scale(1)"; }, 50);
                 return;
             }
             poemDiv.textContent = poems[index];
             gifImg.src = gifs[index];
-            poemDiv.classList.remove("hide");
+            poemDiv.classList.add("show");
             gifImg.classList.add("show");
-        }, 1200);
-    }, 4000);
+        }, 800);
+
+    }, 4800); // 4s visible + 0.8s fade
 };
 
-/* 💥 NEW ENDING */
+/* 💥 Cinematic heart explosion and final message */
 bigHeart.onclick = () => {
     bigHeart.style.display = "none";
     heartHint.style.display = "none";
